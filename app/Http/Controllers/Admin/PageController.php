@@ -1,0 +1,99 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Page;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+
+class PageController extends Controller
+{
+    public function index()
+    {
+        $pages = Page::with('translations', 'author')->latest()->paginate(10);
+        return view('admin.pages.index', compact('pages'));
+    }
+
+    public function create()
+    {
+        return view('admin.pages.create');
+    }
+
+    public function store(Request $request)
+    {
+        // التحقق (للغة الحالية فقط)
+        $locale = app()->getLocale();
+        $request->validate([
+            "$locale.title" => 'required|string|max:255',
+            "$locale.slug" => "nullable|string|max:255|unique:page_translations,slug",
+            'image' => 'nullable|image|max:2048',
+            'status' => 'required|in:published,draft',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $data = $request->except(['image']);
+            $data['user_id'] = Auth::id();
+
+            if ($request->hasFile('image')) {
+                $data['image'] = $request->file('image')->store('pages', 'public');
+            }
+
+            Page::create($data);
+
+            DB::commit();
+            return redirect()->route('admin.pages.index')->with('success', __('dashboard.messages.success'));
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', $e->getMessage())->withInput();
+        }
+    }
+
+    public function edit(Page $page)
+    {
+        return view('admin.pages.edit', compact('page'));
+    }
+
+    public function update(Request $request, Page $page)
+    {
+        $locale = app()->getLocale();
+        // ID الصفحة الحالية للاستثناء من فحص الرابط المكرر
+        $pageId = $page->id;
+
+        $request->validate([
+            "$locale.title" => 'required|string|max:255',
+            "$locale.slug" => "nullable|string|max:255|unique:page_translations,slug,{$pageId},page_id",
+            'image' => 'nullable|image|max:2048',
+            'status' => 'required|in:published,draft',
+        ]);
+
+        try {
+            $data = $request->except(['image']);
+
+            if ($request->hasFile('image')) {
+                if ($page->image && Storage::disk('public')->exists($page->image)) {
+                    Storage::disk('public')->delete($page->image);
+                }
+                $data['image'] = $request->file('image')->store('pages', 'public');
+            }
+
+            $page->update($data);
+
+            return redirect()->route('admin.pages.index')->with('success', __('dashboard.messages.success'));
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage())->withInput();
+        }
+    }
+
+    public function destroy(Page $page)
+    {
+        if ($page->image && Storage::disk('public')->exists($page->image)) {
+            Storage::disk('public')->delete($page->image);
+        }
+        $page->delete();
+        return back()->with('success', __('dashboard.messages.success'));
+    }
+}
