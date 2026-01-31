@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\SettingController;
-
+use App\Http\Controllers\GcsTestController;
 
 /*
 |--------------------------------------------------------------------------

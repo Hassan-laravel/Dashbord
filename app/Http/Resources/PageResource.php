@@ -16,7 +16,7 @@ class PageResource extends JsonResource
             'content' => $this->content,      // مترجم تلقائياً
 
             // الصورة البارزة
-            'image' => $this->image ? asset('storage/' . $this->image) : null,
+            'image' => $this->image ? \Illuminate\Support\Facades\Storage::disk('gcs')->url($this->image) : null,
 
             // بيانات SEO
             'meta' => [

@@ -109,7 +109,7 @@
                 <div class="card-header bg-white fw-bold">{{ __('dashboard.pages.featured_image') }}</div>
                 <div class="card-body text-center">
                     @if($page->image)
-                        <img id="featured-preview" src="{{ asset('storage/'.$page->image) }}" class="img-fluid mb-2 rounded border" style="max-height: 150px; width: 100%; object-fit: cover;">
+                        <img id="featured-preview" src="{{ Storage::disk('gcs')->url($page->image) }}" class="img-fluid mb-2 rounded border" style="max-height: 150px; width: 100%; object-fit: cover;">
                     @else
                         <img id="featured-preview" src="https://via.placeholder.com/300x200?text=No+Image" class="img-fluid mb-2 rounded border">
                     @endif

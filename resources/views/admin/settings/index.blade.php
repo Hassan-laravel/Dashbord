@@ -71,7 +71,7 @@
                 </div>
                 <div class="card-body text-center">
                     @if($setting->site_logo)
-                        <img src="{{ asset('storage/'.$setting->site_logo) }}" class="img-fluid mb-3 rounded border p-1" style="max-height: 100px;">
+                        <img src="{{ Storage::disk('gcs')->url($setting->site_logo) }}" class="img-fluid mb-3 rounded border p-1" style="max-height: 100px;">
                     @else
                         <div class="bg-light border rounded p-3 text-muted mb-3">No Logo</div>
                     @endif

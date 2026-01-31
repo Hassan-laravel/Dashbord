@@ -17,7 +17,7 @@ class SettingResource extends JsonResource
         return [
             // البيانات الثابتة
             'email' => $this->site_email,
-            'logo' => $this->site_logo ? asset('storage/' . $this->site_logo) : null,
+            'logo' => $this->site_logo ? \Illuminate\Support\Facades\Storage::disk('gcs')->url($this->site_logo) : null,
             'maintenance_mode' => (bool) $this->maintenance_mode,
 
             // البيانات المترجمة (تتغير تلقائياً حسب الميدل وير)

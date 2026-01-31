@@ -21,7 +21,7 @@
                 @forelse($pages as $page)
                 <tr>
                     <td>
-                        @if($page->image) <img src="{{ asset('storage/'.$page->image) }}" width="50" class="rounded"> @endif
+                        @if($page->image) <img src="{{ Storage::disk('gcs')->url($page->image) }}" width="50" class="rounded"> @endif
                     </td>
                     <td>
                         <span class="fw-bold">{{ $page->title }}</span>

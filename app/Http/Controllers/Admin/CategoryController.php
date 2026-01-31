@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Http\Requests\Admin\StoreCategoryRequest;
 use App\Http\Requests\Admin\UpdateCategoryRequest;
+use App\Traits\HandlesGcsImage;
 
 class CategoryController extends Controller
 {
+    use HandlesGcsImage;
     public function index()
     {
         $categories = Category::latest()->paginate(10);

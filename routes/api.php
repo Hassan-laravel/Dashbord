@@ -5,10 +5,12 @@ use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\SettingController;
+use App\Http\Controllers\GcsTestController;
 use Illuminate\Support\Facades\Route;
 // استدعاء الميدل وير الذي أنشأناه
 use App\Http\Middleware\SetApiLocale;
-
+Route::post('/test-gcs-upload', [GcsTestController::class, 'uploadTest']);
+Route::get('/test-gcs-connection', [GcsTestController::class, 'testConnection']);
 Route::post('/contact/send', [ContactController::class, 'store'])
      ->middleware('throttle:5,1'); // يسمح بـ 5 رسائل فقط كل دقيقة لكل IP
 Route::middleware([SetApiLocale::class])->group(function () {

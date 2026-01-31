@@ -3,7 +3,7 @@
         <td>{{ $posts->firstItem() + $loop->index }}</td> {{-- ترقيم متسلسل حسب الصفحة --}}
         <td>
             @if($post->image)
-                <img src="{{ asset('storage/'.$post->image) }}" width="50" class="rounded" alt="img">
+                <img src="{{ Storage::disk('gcs')->url($post->image) }}" width="50" class="rounded" alt="img">
             @else
                 <span class="text-muted small">{{ __('dashboard.general.no_image') }}</span>
             @endif

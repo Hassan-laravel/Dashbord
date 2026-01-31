@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Page;
+use App\Traits\HandlesGcsImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 
 class PageController extends Controller
 {
+    use HandlesGcsImage;
     public function index()
     {
         $pages = Page::with('translations', 'author')->latest()->paginate(10);
@@ -29,7 +31,7 @@ class PageController extends Controller
         $request->validate([
             "$locale.title" => 'required|string|max:255',
             "$locale.slug" => "nullable|string|max:255|unique:page_translations,slug",
-            'image' => 'nullable|image|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,gif,webp|max:5120',
             'status' => 'required|in:published,draft',
         ]);
 
@@ -39,7 +41,10 @@ class PageController extends Controller
             $data['user_id'] = Auth::id();
 
             if ($request->hasFile('image')) {
-                $data['image'] = $request->file('image')->store('pages', 'public');
+                $imageResult = $this->uploadImageToGcs($request->file('image'), 'pages');
+                if ($imageResult) {
+                    $data['image'] = $imageResult['path'];
+                }
             }
 
             Page::create($data);
@@ -66,7 +71,7 @@ class PageController extends Controller
         $request->validate([
             "$locale.title" => 'required|string|max:255',
             "$locale.slug" => "nullable|string|max:255|unique:page_translations,slug,{$pageId},page_id",
-            'image' => 'nullable|image|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,gif,webp|max:5120',
             'status' => 'required|in:published,draft',
         ]);
 
@@ -74,10 +79,10 @@ class PageController extends Controller
             $data = $request->except(['image']);
 
             if ($request->hasFile('image')) {
-                if ($page->image && Storage::disk('public')->exists($page->image)) {
-                    Storage::disk('public')->delete($page->image);
+                $imageResult = $this->updateImageInGcs($page->image ?? '', $request->file('image'), 'pages');
+                if ($imageResult) {
+                    $data['image'] = $imageResult['path'];
                 }
-                $data['image'] = $request->file('image')->store('pages', 'public');
             }
 
             $page->update($data);
@@ -90,8 +95,8 @@ class PageController extends Controller
 
     public function destroy(Page $page)
     {
-        if ($page->image && Storage::disk('public')->exists($page->image)) {
-            Storage::disk('public')->delete($page->image);
+        if ($page->image) {
+            $this->deleteImageFromGcs($page->image);
         }
         $page->delete();
         return back()->with('success', __('dashboard.messages.success'));

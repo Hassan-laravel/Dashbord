@@ -19,13 +19,13 @@ class PostResource extends JsonResource
             'excerpt' => mb_substr(strip_tags($this->content ?? ''), 0, 150) . '...',
 
             // --- 2. الصورة الرئيسية للمقال ---
-            'main_image' => $this->image ? asset('storage/' . $this->image) : null,
+            'main_image' => $this->image ? \Illuminate\Support\Facades\Storage::disk('gcs')->url($this->image) : null,
 
             // --- 3. صور المعرض (post_images) ---
             'gallery' => $this->images->map(function ($img) {
                 return [
                     'id' => $img->id,
-                    'url' => asset('storage/' . $img->image_path), // تأكد أن اسم العمود في جدول الصور صحيح
+                    'url' => \Illuminate\Support\Facades\Storage::disk('gcs')->url($img->image_path),
                 ];
             }),
             'categories' => CategoryResource::collection($this->whenLoaded('categories')),

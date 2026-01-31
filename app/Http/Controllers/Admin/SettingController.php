@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use App\Traits\HandlesGcsImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class SettingController extends Controller
 {
+    use HandlesGcsImage;
     public function index()
     {
         // جلب الإعدادات (الصف الأول دائماً)
@@ -44,10 +46,10 @@ class SettingController extends Controller
 
         // 3. رفع الشعار الجديد
         if ($request->hasFile('site_logo')) {
-            if ($setting->site_logo && Storage::disk('public')->exists($setting->site_logo)) {
-                Storage::disk('public')->delete($setting->site_logo);
+            $imageResult = $this->updateImageInGcs($setting->site_logo ?? '', $request->file('site_logo'), 'settings');
+            if ($imageResult) {
+                $data['site_logo'] = $imageResult['path'];
             }
-            $data['site_logo'] = $request->file('site_logo')->store('settings', 'public');
         }
 
         // 4. الحفظ (الحزمة تتكفل بحفظ البيانات المترجمة في الجدول الآخر تلقائياً)

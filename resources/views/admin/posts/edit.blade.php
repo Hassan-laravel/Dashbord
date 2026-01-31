@@ -90,7 +90,7 @@
                 <div class="card-header bg-white fw-bold">{{ __('dashboard.posts.featured_image') }}</div>
                 <div class="card-body text-center">
                     @if($post->image)
-                        <img id="featured-preview" src="{{ asset('storage/'.$post->image) }}" class="img-fluid mb-2 rounded border" style="max-height: 150px; width: 100%; object-fit: cover;">
+                        <img id="featured-preview" src="{{ Storage::disk('gcs')->url($post->image) }}" class="img-fluid mb-2 rounded border" style="max-height: 150px; width: 100%; object-fit: cover;">
                     @else
                         <img id="featured-preview" src="https://via.placeholder.com/300x200?text=No+Image" class="img-fluid mb-2 rounded border">
                     @endif
@@ -105,7 +105,7 @@
                     <div class="d-flex flex-wrap gap-2 mb-3">
                         @foreach($post->images as $img)
                             <div class="position-relative">
-                                <img src="{{ asset('storage/'.$img->image_path) }}" width="60" height="60" class="rounded border" style="object-fit: cover">
+                                <img src="{{ Storage::disk('gcs')->url($img->image_path) }}" width="60" height="60" class="rounded border" style="object-fit: cover">
                             </div>
                         @endforeach
                     </div>

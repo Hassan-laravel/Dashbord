@@ -9,6 +9,7 @@ use App\Models\PostImage;
 use App\Http\Requests\Admin\StorePostRequest;
 use App\Http\Requests\admin\UpdatePostRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
+use App\Traits\HandlesGcsImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
+    use HandlesGcsImage;
 public function index(Request $request)
     {
         // 1. جلب التصنيفات لاستخدامها في القائمة المنسدلة
@@ -78,7 +80,10 @@ public function create()
             $data['user_id'] = Auth::id();
 
             if ($request->hasFile('image')) {
-                $data['image'] = $request->file('image')->store('posts/featured', 'public');
+                $imageResult = $this->uploadImageToGcs($request->file('image'), 'posts/featured');
+                if ($imageResult) {
+                    $data['image'] = $imageResult['path'];
+                }
             }
 
             $post = Post::create($data);
@@ -89,10 +94,13 @@ public function create()
 
             if ($request->hasFile('gallery')) {
                 foreach ($request->file('gallery') as $file) {
-                    PostImage::create([
-                        'post_id' => $post->id,
-                        'image_path' => $file->store('posts/gallery', 'public'),
-                    ]);
+                    $imageResult = $this->uploadImageToGcs($file, 'posts/gallery');
+                    if ($imageResult) {
+                        PostImage::create([
+                            'post_id' => $post->id,
+                            'image_path' => $imageResult['path'],
+                        ]);
+                    }
                 }
             }
 
@@ -119,10 +127,10 @@ public function create()
             $data = $request->except(['image', 'gallery', 'categories']);
 
             if ($request->hasFile('image')) {
-                if ($post->image && Storage::disk('public')->exists($post->image)) {
-                    Storage::disk('public')->delete($post->image);
+                $imageResult = $this->updateImageInGcs($post->image ?? '', $request->file('image'), 'posts/featured');
+                if ($imageResult) {
+                    $data['image'] = $imageResult['path'];
                 }
-                $data['image'] = $request->file('image')->store('posts/featured', 'public');
             }
 
             $post->update($data);
@@ -135,10 +143,13 @@ public function create()
 
             if ($request->hasFile('gallery')) {
                 foreach ($request->file('gallery') as $file) {
-                    PostImage::create([
-                        'post_id' => $post->id,
-                        'image_path' => $file->store('posts/gallery', 'public'),
-                    ]);
+                    $imageResult = $this->uploadImageToGcs($file, 'posts/gallery');
+                    if ($imageResult) {
+                        PostImage::create([
+                            'post_id' => $post->id,
+                            'image_path' => $imageResult['path'],
+                        ]);
+                    }
                 }
             }
 
@@ -154,13 +165,11 @@ public function create()
 
     public function destroy(Post $post)
     {
-        if ($post->image && Storage::disk('public')->exists($post->image)) {
-            Storage::disk('public')->delete($post->image);
+        if ($post->image) {
+            $this->deleteImageFromGcs($post->image);
         }
         foreach ($post->images as $img) {
-            if (Storage::disk('public')->exists($img->image_path)) {
-                Storage::disk('public')->delete($img->image_path);
-            }
+            $this->deleteImageFromGcs($img->image_path);
         }
         $post->delete();
         // التعديل هنا
