@@ -109,59 +109,85 @@ class GcsTestController extends Controller
     /**
      * اختبار الاتصال بـ Google Cloud Storage
      */
-    // public function testConnection(): JsonResponse
-    // {
-    //     try {
-    //         $keyFile = env('GCS_KEY_FILE');
-    //         $projectId = env('GCS_PROJECT_ID');
-    //         $bucket = env('GCS_BUCKET');
+    public function testConnection(): JsonResponse
+    {
+        try {
+            $keyFile = env('GCS_KEY_FILE');
+            $projectId = env('GCS_PROJECT_ID');
+            $bucket = env('GCS_BUCKET');
 
-    //         // التحقق من المتغيرات البيئية
-    //         if (!$keyFile || !$projectId || !$bucket) {
-    //             return response()->json([
-    //                 'status' => 'error',
-    //                 'message' => 'المتغيرات البيئية غير مكتملة',
-    //                 'config' => [
-    //                     'key_file' => $keyFile ? 'موجود' : 'غير موجود',
-    //                     'project_id' => $projectId ? 'موجود' : 'غير موجود',
-    //                     'bucket' => $bucket ? 'موجود' : 'غير موجود'
-    //                 ]
-    //             ], 400);
-    //         }
+            // التحقق من المتغيرات البيئية
+            if (!$keyFile || !$projectId || !$bucket) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'المتغيرات البيئية غير مكتملة',
+                    'config' => [
+                        'key_file' => $keyFile ? 'موجود' : 'غير موجود',
+                        'project_id' => $projectId ? 'موجود' : 'غير موجود',
+                        'bucket' => $bucket ? 'موجود' : 'غير موجود'
+                    ]
+                ], 400);
+            }
 
-    //         // التحقق من وجود ملف المفاتيح
-    //         if (!file_exists($keyFile)) {
-    //             return response()->json([
-    //                 'status' => 'error',
-    //                 'message' => 'ملف المفاتيح غير موجود',
-    //                 'key_file_path' => $keyFile
-    //             ], 400);
-    //         }
+            // تحويل المسار النسبي إلى مطلق
+            $fullPath = base_path($keyFile);
 
-    //         // محاولة الاتصال
-    //         $disk = Storage::disk('gcs');
-    //         $files = $disk->listContents('/');
+            // التحقق من وجود ملف المفاتيح
+            if (!file_exists($fullPath)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'ملف المفاتيح غير موجود',
+                    'key_file_path' => $keyFile,
+                    'full_path' => $fullPath,
+                    'debug' => env('APP_DEBUG') ? [
+                        'base_path' => base_path(),
+                        'storage_contents' => glob(storage_path('app/*'))
+                    ] : null
+                ], 400);
+            }
 
-    //         return response()->json([
-    //             'status' => 'success',
-    //             'message' => 'تم الاتصال بـ Google Cloud Storage بنجاح',
-    //             'config' => [
-    //                 'project_id' => $projectId,
-    //                 'bucket' => $bucket,
-    //                 'key_file' => basename($keyFile),
-    //                 'files_count' => iterator_count($files)
-    //             ]
-    //         ]);
+            // التحقق من صحة JSON
+            $jsonContent = file_get_contents($fullPath);
+            $decoded = json_decode($jsonContent, true);
 
-    //     } catch (Exception $e) {
-    //         \Log::error('GCS Connection Test Error: ' . $e->getMessage());
+            if (!$decoded) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'ملف المفاتيح فاسد - JSON غير صحيح',
+                    'error' => json_last_error_msg()
+                ], 400);
+            }
 
-    //         return response()->json([
-    //             'status' => 'error',
-    //             'message' => 'فشل الاتصال بـ Google Cloud Storage',
-    //             'error' => $e->getMessage(),
-    //             'debug' => env('APP_DEBUG') ? $e->getTraceAsString() : null
-    //         ], 500);
-    //     }
-    // }
+            // محاولة الاتصال
+            $disk = Storage::disk('gcs');
+            $files = $disk->listContents('/');
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'تم الاتصال بـ Google Cloud Storage بنجاح',
+                'config' => [
+                    'project_id' => $projectId,
+                    'bucket' => $bucket,
+                    'key_file' => basename($keyFile),
+                    'key_file_path' => $fullPath,
+                    'files_count' => iterator_count($files),
+                    'service_account' => $decoded['client_email'] ?? 'Unknown'
+                ]
+            ]);
+
+        } catch (Exception $e) {
+            \Log::error('GCS Connection Test Error: ' . $e->getMessage());
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'فشل الاتصال بـ Google Cloud Storage',
+                'error' => $e->getMessage(),
+                'debug' => env('APP_DEBUG') ? [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTraceAsString()
+                ] : null
+            ], 500);
+        }
+    }
 }
