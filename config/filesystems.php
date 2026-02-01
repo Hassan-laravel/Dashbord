@@ -61,12 +61,9 @@ return [
         ],
 'gcs' => [
     'driver' => 'gcs',
-    'project_id' => env('GCS_PROJECT_ID', 'laravel-gcs-project'),
-
-    // الحل هنا: نقرأ محتوى الملف ونحوله لمصفوفة فوراً
-    'key_file' => json_decode(file_get_contents(storage_path('app/google-auth.json')), true),
-
-    'bucket' => env('GCS_BUCKET', 'laravel-media-storage-2026'),
+    'project_id' => env('GCS_PROJECT_ID'),
+    'key_file' => env('GCS_KEY_FILE') ? json_decode(file_get_contents(env('GCS_KEY_FILE')), true) : null,
+    'bucket' => env('GCS_BUCKET'),
     'path_prefix' => env('GCS_PATH_PREFIX', ''),
     'storage_api_uri' => env('GCS_STORAGE_API_URI', null),
     'visibility' => 'public',
