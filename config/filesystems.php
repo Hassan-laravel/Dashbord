@@ -59,25 +59,11 @@ return [
             'throw' => false,
             'report' => false,
         ],
-// 'gcs' => [
-//     'driver' => 'gcs',
-//     'project_id' => env('GCS_PROJECT_ID'),
-//     'key_file' => env('GCS_KEY_FILE') ? json_decode(file_get_contents(base_path(env('GCS_KEY_FILE'))), true) : null,
-//     'bucket' => env('GCS_BUCKET'),
-//     'path_prefix' => env('GCS_PATH_PREFIX', ''),
-//     'storage_api_uri' => env('GCS_STORAGE_API_URI', null),
-//     'visibility' => 'public',
-// ],
 'gcs' => [
     'driver' => 'gcs',
-    'project_id' => env('GCS_PROJECT_ID', 'laravel-gcs-project'),
-    
-    // فك التشفير من Base64 إلى مصفوفة JSON
-    'key_file' => env('GCS_KEY_BASE64') 
-        ? json_decode(base64_decode(env('GCS_KEY_BASE64')), true) 
-        : storage_path('app/google-auth.json'), // للمحلي
-
-    'bucket' => env('GCS_BUCKET', 'laravel-media-storage-2026'),
+    'project_id' => env('GCS_PROJECT_ID'),
+    'key_file' => env('GCS_KEY_FILE') ? json_decode(file_get_contents(base_path(env('GCS_KEY_FILE'))), true) : null,
+    'bucket' => env('GCS_BUCKET'),
     'path_prefix' => env('GCS_PATH_PREFIX', ''),
     'storage_api_uri' => env('GCS_STORAGE_API_URI', null),
     'visibility' => 'public',
