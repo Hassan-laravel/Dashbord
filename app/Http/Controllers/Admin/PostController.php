@@ -159,9 +159,8 @@ class PostController extends Controller
                 ->with('success', __('dashboard.messages.post_updated'));
         } catch (\Exception $e) {
             DB::rollBack();
-            // أضف السطر التالي مؤقتاً لترى الخطأ الحقيقي بدلاً من رسالة عامة
-            dd($e->getMessage(), $e->getTraceAsString());
-            return back()->with('error', $e->getMessage())->withInput();
+            // هذا السطر سيطبع لك الخطأ الحقيقي بدلاً من 500
+            return response()->json(['error' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
         }
     }
 
