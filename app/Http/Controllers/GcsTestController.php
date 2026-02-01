@@ -137,6 +137,9 @@ class GcsTestController extends Controller
             $keySource = null; // file | env_raw | env_base64
             $fullPath = null;
 
+            // Trim whitespace
+            $keyFile = trim($keyFile);
+
             $possiblePath = base_path($keyFile);
             if (file_exists($possiblePath)) {
                 $fullPath = $possiblePath;
@@ -150,7 +153,9 @@ class GcsTestController extends Controller
                     $keySource = 'env_raw';
                 } else {
                     // محاولة Base64
-                    $base = base64_decode($keyFile, true);
+                    // Remove whitespace from base64 string
+                    $cleanBase64 = str_replace(["\n", "\r", " ", "\t"], '', $keyFile);
+                    $base = base64_decode($cleanBase64, true);
                     if ($base !== false) {
                         $decodedCandidate = json_decode($base, true);
                         if (json_last_error() === JSON_ERROR_NONE && is_array($decodedCandidate)) {

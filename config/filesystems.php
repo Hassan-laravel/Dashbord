@@ -72,6 +72,9 @@ return [
             return null;
         }
 
+        // Trim whitespace (important for env vars from dashboards)
+        $gcsKey = trim($gcsKey);
+
         // 1) If it looks like a path on the project, try reading it
         $possiblePath = base_path($gcsKey);
         if (file_exists($possiblePath)) {
@@ -87,7 +90,9 @@ return [
         }
 
         // 3) Try decoding as base64-encoded JSON
-        $base = base64_decode($gcsKey, true);
+        // Strip whitespace/newlines from base64 string
+        $cleanBase64 = str_replace(["\n", "\r", " ", "\t"], '', $gcsKey);
+        $base = base64_decode($cleanBase64, true);
         if ($base !== false) {
             $decodedBase = json_decode($base, true);
             if (json_last_error() === JSON_ERROR_NONE && is_array($decodedBase)) {
