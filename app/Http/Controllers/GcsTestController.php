@@ -167,16 +167,29 @@ class GcsTestController extends Controller
             }
 
             if (!$decoded) {
+                // Debug info for base64 decoding failures
+                $debugInfo = [];
+                if (env('APP_DEBUG')) {
+                    $cleanBase64 = str_replace(["\n", "\r", " ", "\t"], '', $keyFile);
+                    $base64Decoded = base64_decode($cleanBase64, true);
+                    $debugInfo = [
+                        'key_file_length' => strlen($keyFile),
+                        'clean_base64_length' => strlen($cleanBase64),
+                        'base64_decode_result' => $base64Decoded !== false ? 'decoded_successfully' : 'base64_decode_failed',
+                        'json_decode_error' => json_last_error_msg(),
+                        'attempted_path_exists' => file_exists(base_path($keyFile)),
+                        'base_path' => base_path(),
+                        'storage_contents' => glob(storage_path('app/*'))
+                    ];
+                }
+
                 return response()->json([
                     'status' => 'error',
                     'message' => 'ملف المفاتيح غير موجود أو غير صالح. تأكد من قيمة GCS_KEY_FILE (path, raw JSON أو base64).',
                     'key_file_value_preview' => substr($keyFile, 0, 200),
                     'key_file_source_attempted' => $keySource,
                     'full_path' => $fullPath,
-                    'debug' => env('APP_DEBUG') ? [
-                        'base_path' => base_path(),
-                        'storage_contents' => glob(storage_path('app/*'))
-                    ] : null
+                    'debug' => $debugInfo
                 ], 400);
             }
 
