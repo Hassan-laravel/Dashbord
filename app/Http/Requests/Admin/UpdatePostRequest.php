@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Validation\Rule;
 class UpdatePostRequest extends FormRequest
 {
     /**
@@ -30,7 +30,16 @@ class UpdatePostRequest extends FormRequest
         return [
             "$locale.title" => 'required|string|max:255',
             // استثناء المقال الحالي من فحص التكرار باستخدام الآيدي المستخرج
-            "$locale.slug" => "nullable|string|max:255|unique:post_translations,slug,{$postId},post_id",
+            // "$locale.slug" => "nullable|string|max:255|unique:post_translations,slug,{$postId},post_id",
+            "$locale.slug" => [
+    'nullable',
+    'string',
+    'max:255',
+    // الطريقة الأكثر دقة باستخدام Rule class لتجنب أخطاء السيرفر
+    \Illuminate\Validation\Rule::unique('post_translations', 'slug')
+        ->ignore($postId, 'post_id')
+        ->where('locale', $locale) // استثناء اللغة الحالية فقط لهذا المقال
+],
             "$locale.content" => 'nullable',
 
             // جعلنا التصنيفات اختيارية (nullable) لتجنب مشاكل إذا لم يختر المستخدم شيئاً
