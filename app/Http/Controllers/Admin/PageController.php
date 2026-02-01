@@ -26,6 +26,7 @@ class PageController extends Controller
 
     public function store(Request $request)
     {
+        dd($request->all(), $request->file('image'));
         // التحقق (للغة الحالية فقط)
         $locale = app()->getLocale();
         $request->validate([
