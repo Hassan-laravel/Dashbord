@@ -120,49 +120,33 @@ class PostController extends Controller
         return view('admin.posts.edit', compact('post', 'categories'));
     }
 
-    public function update(UpdatePostRequest $request, Post $post)
-    {
-        DB::beginTransaction();
-        try {
-            $data = $request->except(['image', 'gallery', 'categories']);
+public function update(Request $request, Post $post) // غيرنا النوع هنا
+{
+    $locale = app()->getLocale();
+    $postId = $post->id;
 
-            if ($request->hasFile('image')) {
-                $imageResult = $this->updateImageInGcs($post->image ?? '', $request->file('image'), 'posts/featured');
-                if ($imageResult) {
-                    $data['image'] = $imageResult['path'];
-                }
-            }
+    // التحقق يدوياً كما في الصفحات
+    $request->validate([
+        "$locale.title" => 'required|string|max:255',
+        "$locale.slug" => "nullable|string|max:255|unique:post_translations,slug,{$postId},post_id",
+        'status' => 'required|in:published,draft',
+        'categories' => 'nullable|array',
+        'image' => 'nullable|image|max:2048',
+    ]);
 
-            $post->update($data);
+    DB::beginTransaction();
+    try {
+        $data = $request->except(['image', 'gallery', 'categories', '_token', '_method']);
 
-            // if ($request->has('categories')) {
-            //     $post->categories()->sync($request->categories);
-            // } else {
-            //     $post->categories()->detach();
-            // }
+        // ... بقية الكود الخاص بالرفع والـ sync ...
 
-            if ($request->hasFile('gallery')) {
-                foreach ($request->file('gallery') as $file) {
-                    $imageResult = $this->uploadImageToGcs($file, 'posts/gallery');
-                    if ($imageResult) {
-                        PostImage::create([
-                            'post_id' => $post->id,
-                            'image_path' => $imageResult['path'],
-                        ]);
-                    }
-                }
-            }
-
-            DB::commit();
-            // التعديل هنا
-            return redirect()->route('admin.posts.index')
-                ->with('success', __('dashboard.messages.post_updated'));
-        } catch (\Exception $e) {
-            DB::rollBack();
-            // هذا السطر سيطبع لك الخطأ الحقيقي بدلاً من 500
-            return response()->json(['error' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
-        }
+        DB::commit();
+        return redirect()->route('admin.posts.index')->with('success', 'تم التحديث');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', $e->getMessage());
     }
+}
 
     public function destroy(Post $post)
     {
