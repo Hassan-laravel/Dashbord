@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Storage;
 class PostController extends Controller
 {
     use HandlesGcsImage;
-public function index(Request $request)
+    public function index(Request $request)
     {
         // 1. جلب التصنيفات لاستخدامها في القائمة المنسدلة
         $categories = Category::all();
@@ -61,7 +61,7 @@ public function index(Request $request)
         return view('admin.posts.index', compact('posts', 'categories'));
     }
 
-public function create()
+    public function create()
     {
         // 1. جلب التصنيفات المفعلة فقط (status = 1 او true)
         // 2. استخدام with('translations') لتحسين الأداء
@@ -159,6 +159,8 @@ public function create()
                 ->with('success', __('dashboard.messages.post_updated'));
         } catch (\Exception $e) {
             DB::rollBack();
+            // أضف السطر التالي مؤقتاً لترى الخطأ الحقيقي بدلاً من رسالة عامة
+            dd($e->getMessage(), $e->getTraceAsString());
             return back()->with('error', $e->getMessage())->withInput();
         }
     }

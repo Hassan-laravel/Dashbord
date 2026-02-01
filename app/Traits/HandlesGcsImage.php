@@ -40,23 +40,20 @@ public function uploadImageToGcs(UploadedFile $file, string $folder = 'uploads')
     /**
      * حذف صورة من Google Cloud Storage
      */
-    public function deleteImageFromGcs(string $path): bool
-    {
-        try {
-            if (empty($path)) {
-                return false;
-            }
-
+public function deleteImageFromGcs(string $path): bool
+{
+    try {
+        if (empty($path)) return false;
+        // تحقق من وجود الملف قبل محاولة الحذف
+        if (Storage::disk('gcs')->exists($path)) {
             return Storage::disk('gcs')->delete($path);
-
-        } catch (Exception $e) {
-            \Log::error('GCS Delete Error: ' . $e->getMessage(), [
-                'path' => $path,
-                'exception' => $e
-            ]);
-            return false;
         }
+        return true; // نعتبرها ناجحة حتى لو لم يجد الملف لكي لا يتوقف الـ Controller
+    } catch (Exception $e) {
+        \Log::error('GCS Delete Error: ' . $e->getMessage());
+        return false;
     }
+}
 
     /**
      * تحديث صورة (حذف القديمة ورفع الجديدة)
