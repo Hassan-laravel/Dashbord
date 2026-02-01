@@ -129,32 +129,49 @@ class GcsTestController extends Controller
                 ], 400);
             }
 
-            // تحويل المسار النسبي إلى مطلق
-            $fullPath = base_path($keyFile);
+            // دعم ثلاث طرق لتمرير بيانات الاعتماد في GCS_KEY_FILE:
+            // 1) مسار داخل المشروع: storage/app/google-auth.json
+            // 2) JSON خام ملصوق مباشرة
+            // 3) Base64-encoded JSON
+            $decoded = null;
+            $keySource = null; // file | env_raw | env_base64
+            $fullPath = null;
 
-            // التحقق من وجود ملف المفاتيح
-            if (!file_exists($fullPath)) {
+            $possiblePath = base_path($keyFile);
+            if (file_exists($possiblePath)) {
+                $fullPath = $possiblePath;
+                $content = file_get_contents($fullPath);
+                $decoded = json_decode($content, true);
+                $keySource = 'file';
+            } else {
+                // محاولة JSON خام
+                $decoded = json_decode($keyFile, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                    $keySource = 'env_raw';
+                } else {
+                    // محاولة Base64
+                    $base = base64_decode($keyFile, true);
+                    if ($base !== false) {
+                        $decodedCandidate = json_decode($base, true);
+                        if (json_last_error() === JSON_ERROR_NONE && is_array($decodedCandidate)) {
+                            $decoded = $decodedCandidate;
+                            $keySource = 'env_base64';
+                        }
+                    }
+                }
+            }
+
+            if (!$decoded) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'ملف المفاتيح غير موجود',
-                    'key_file_path' => $keyFile,
+                    'message' => 'ملف المفاتيح غير موجود أو غير صالح. تأكد من قيمة GCS_KEY_FILE (path, raw JSON أو base64).',
+                    'key_file_value_preview' => substr($keyFile, 0, 200),
+                    'key_file_source_attempted' => $keySource,
                     'full_path' => $fullPath,
                     'debug' => env('APP_DEBUG') ? [
                         'base_path' => base_path(),
                         'storage_contents' => glob(storage_path('app/*'))
                     ] : null
-                ], 400);
-            }
-
-            // التحقق من صحة JSON
-            $jsonContent = file_get_contents($fullPath);
-            $decoded = json_decode($jsonContent, true);
-
-            if (!$decoded) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'ملف المفاتيح فاسد - JSON غير صحيح',
-                    'error' => json_last_error_msg()
                 ], 400);
             }
 
@@ -168,7 +185,7 @@ class GcsTestController extends Controller
                 'config' => [
                     'project_id' => $projectId,
                     'bucket' => $bucket,
-                    'key_file' => basename($keyFile),
+                    'key_file_source' => $keySource,
                     'key_file_path' => $fullPath,
                     'files_count' => iterator_count($files),
                     'service_account' => $decoded['client_email'] ?? 'Unknown'
