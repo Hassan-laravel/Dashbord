@@ -63,8 +63,8 @@ return [
     'driver' => 'gcs',
     'project_id' => env('GCS_PROJECT_ID', 'laravel-gcs-project'),
 
-    // هذا السطر يخبر لارافل أن يبحث عن الملف داخل مجلد storage/app
-    'key_file' => storage_path('app/google-auth.json'),
+    // الحل هنا: نقرأ محتوى الملف ونحوله لمصفوفة فوراً
+    'key_file' => json_decode(file_get_contents(storage_path('app/google-auth.json')), true),
 
     'bucket' => env('GCS_BUCKET', 'laravel-media-storage-2026'),
     'path_prefix' => env('GCS_PATH_PREFIX', ''),
