@@ -106,7 +106,7 @@ git commit -m "Setup Cloudinary for image hosting"
 git push origin main --force
 
 git add -f storage/app/google-auth.json
-
+git pull origin main --rebase
 git rm --cached storage/app/google-auth.json
 git commit -m "Remove secret key and ignore it"
 git push
