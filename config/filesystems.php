@@ -72,7 +72,7 @@ return [
     'path_prefix' => env('GCS_PATH_PREFIX', ''),
     'storage_api_uri' => env('GCS_STORAGE_API_URI', null),
     'visibility' => 'public',
-],,
+],
 
 
     ],
