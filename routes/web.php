@@ -23,7 +23,7 @@ Route::get('switch-language/{lang}', function ($lang) {
     return redirect()->back();
 })->name('switch.language');
 
-
+Route::get('/check-version', function() { return "Version 2.0 - DD should work"; });
 // --- 2. مسارات المصادقة (تسجيل الدخول/الخروج) ---
 Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
