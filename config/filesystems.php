@@ -61,48 +61,14 @@ return [
         ],
 'gcs' => [
     'driver' => 'gcs',
-    'project_id' => env('GCS_PROJECT_ID'),
-    // Allow GCS credentials to be provided either as:
-    // 1) a relative path (e.g. storage/app/google-auth.json),
-    // 2) a raw JSON string (paste the JSON into the GCS_KEY_FILE env),
-    // 3) a base64-encoded JSON string.
-    'key_file' => (function () {
-        $gcsKey = env('GCS_KEY_FILE');
-        if (!$gcsKey) {
-            return null;
-        }
+    'project_id' => env('GCS_PROJECT_ID', 'laravel-gcs-project'),
+    
+    // تعديل لضمان قراءة الـ Base64 بشكل صحيح حتى لو كان هناك مسافات
+    'key_file' => env('GCS_KEY_BASE64') 
+        ? json_decode(base64_decode(trim(env('GCS_KEY_BASE64'))), true) 
+        : (env('GCS_KEY_FILE') ? storage_path('app/' . env('GCS_KEY_FILE')) : null),
 
-        // Trim whitespace (important for env vars from dashboards)
-        $gcsKey = trim($gcsKey);
-
-        // 1) If it looks like a path on the project, try reading it
-        $possiblePath = base_path($gcsKey);
-        if (file_exists($possiblePath)) {
-            $content = file_get_contents($possiblePath);
-            $decoded = json_decode($content, true);
-            return $decoded ?: null;
-        }
-
-        // 2) Try decoding as raw JSON
-        $decoded = json_decode($gcsKey, true);
-        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-            return $decoded;
-        }
-
-        // 3) Try decoding as base64-encoded JSON
-        // Strip whitespace/newlines from base64 string
-        $cleanBase64 = str_replace(["\n", "\r", " ", "\t"], '', $gcsKey);
-        $base = base64_decode($cleanBase64, true);
-        if ($base !== false) {
-            $decodedBase = json_decode($base, true);
-            if (json_last_error() === JSON_ERROR_NONE && is_array($decodedBase)) {
-                return $decodedBase;
-            }
-        }
-
-        return null;
-    })(),
-    'bucket' => env('GCS_BUCKET'),
+    'bucket' => env('GCS_BUCKET', 'laravel-media-storage-2026'),
     'path_prefix' => env('GCS_PATH_PREFIX', ''),
     'storage_api_uri' => env('GCS_STORAGE_API_URI', null),
     'visibility' => 'public',
