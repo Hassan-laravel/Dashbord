@@ -65,17 +65,17 @@ return [
 
     // الحل الجذري: نضع محتوى الـ JSON مباشرة هنا
     'key_file' => [
-        "type" => "service_account",
-        "project_id" => "laravel-gcs-project",
-        "private_key_id" => "19e9bfc71283ad29c37d5aee570cd6b9f2e3ac3c",
-        "private_key" => "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCqKPBVZZDrHl1s/\ndLc5aXXPe5zSQ5RJAMMZ9UvnDk8HvQGm6CLrSY9SAKlBJY5O3tIdzYMBzuDC4Dcw\nDU60tv5aK8SBMjwAjo8yPFLW/lCHJA4RzobEqxSXxLX4OybtjPnQxPLzrqvun+BuH\nmWzZJQwlTlhOc705+sjkISecfWMUuxvpyref+AOxSwagO7yHm+BpkSP7drmWoYfi\nyIZcei2CjyYSaOKAAPdjLt+q7MEWErXXyCNCNdbSf0knHQ8trKnHaNQXx0ai/0V/\nu8mvu6AAYJEu5m7QCFE1SZffR0YCZMfHLf5ate/77ojeQWuUmgJ2w5YapAnuIdhJWZ\nBYl+v1YZAgMBAAECggEACc5aK1GzGRmi4KeWESTWurvlvOhQGPTsr9StdYW8xpr9\nZ61kQPL2qdvvTP//d323z8F4/BdJZ9dApuBDybGFO8UR8GNO3ewmEtfb6xZOCOga\nMRFQPioHCC4GuDHdSHG7Y9PPYuOwWQ S/WUZzspenZ/vGP9JTSurjV0iupuh2JH4C\nYgz2d+8IFkuykrw9KariRHnzA9OC+PrPVjvPkjF8t/uA9hS9JEGpueaJPrILl02Y\n19AitllkmAWK+DguSGRLkHeUCK0IUO3wKv7s+2f2wSbHkvuKcpavKv5nkTt3Jeqa\n0l4NDw5Cmrf5OeDE1QND7+NSojlVSwnwT+WQBi/3kQKBgQDe9IZSJjvESD3ZfVE/\n/FLIS7bLqHH72y12hvUewD+JSYhJQCxmOc5Xoh+r7/yGLPUPUZq8K+M72T1ycX1a\nVl7iLBK0Uks3EBPQQRpTLI7oCR1rgp+ugeXVHIAPxU0E/nBYetXemRvPTXMlBKE\n2QjLpeswRLUC3QKP4bhDxoArDwKBgQDYTr68VmEkZjt9WsiUomYax9l7bKqK3L\n/MWCUPI dIRkgfv4tsBLFfp1wpjp9Dle2/rbbSY8VruIMzbIL0QS9X0eUFuUkoT4A\nMNzc8TBPWtgVgfE9X2F6GTg28o+7PDUgqORCqBZon5FXlF6r690RkuhP0OmBr+4\nl0o9thQMVwKBgQDGpaxS3r/H4E8JYhEhtBJpyd2r7AU696UQ6/mIByMoJbP4a8Nz\n+qAn7lDZ8dRdDiKYBTUG4r8M2cuXx3uqPKLfLMzEn+osoYVo4XT5nR9Evqfk61/K\nXI/ig1FuQrvKDkgUl/GP8fScDR4XBoee9e/mNa9H0Dr+C8tZtDwKBgBlk28ud7uqi\nGjZFwaT2K0ZaNMN/Ioz4m441zl3/s1hB4wgsOVEq32WWp1Pq81uAr7njJVUfHG/P\nCf6zBX8vrZQHfEAtMZ8vLeXMdAhreMIFKxywhlcGqUfsSqBHMOQdTb/xMt05Klo\n8Gnldpu1xRDaypEXS+THtEqIlV8rpjXWFAoGBANtQAY+Fti+awnQDy4TiKjvbxc+s\ntQatYx+lcdeEZeoJkFV9kHD0f5itw8MXpe2SA4LRwsHngslnXaEF3qxfZDE4eXcz\np4esEnUHMhitBl4untqdaIvZ8oDyrYvx3DUGAyrsugsDGcsNiZ24SNe56NBDKlA\n2tREMFepAMvt0Hy5J\n-----END PRIVATE KEY-----\n",
-        "client_email" => "laravel-access@laravel-gcs-project.iam.gserviceaccount.com",
-        "client_id" => "111150319775402435194",
-        "auth_uri" => "https://accounts.google.com/o/oauth2/auth",
-        "token_uri" => "https://oauth2.googleapis.com/token",
-        "auth_provider_x509_cert_url" => "https://www.googleapis.com/oauth2/v1/certs",
-        "client_x509_cert_url" => "https://www.googleapis.com/robot/v1/metadata/x509/laravel-access%40laravel-gcs-project.iam.gserviceaccount.com",
-        "universe_domain" => "googleapis.com"
+                "type" => "service_account",
+                "project_id" => "laravel-gcs-project",
+                "private_key_id" => "d1da4acb0b0e20480523f253379ad1b7be4d3609",
+                "private_key" => "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCfbIrF2+dzaibG\nf6uMAxD/XFlvuiIzRsef2XNO7jJYRnFcabXZXP+2IAEydxHo3IgApVnsUb/t3qID\nLtLyUuClh4DC2CtZecD+yMrtHMpOtUDXBo0ZQ7UIqNn4C/HQcFfmvaH4lrm+K14i\nEhNqIKgXG678OmxhHM50CT2cnLmD4w1YVb7kzoIlZyyyOvlzQx7PUTdxC2meEvEn\n5klHc1tr0yvyRRFbtX+eLZ6jijF60cnQH7bd0oSlnRmiAZ2L8FO01SdjtlKbeRbS\ntgB8Cv1HhMSc5K/DLPTMvSeLm+RS8iEDjaLR5ZHTm4JzWGYkk3ZFsH0zx9AYAYl6\n6yn3G/f3AgMBAAECggEABH4znwXmjPsl4pxAgm6nsPqyTpLJWfaZs6iWNlhCNPiv\nQzJ7fIfBcSmPvxNZ/t0QPCxsz1sydIq8uCg+q7OoPyIFf/hFqHzk8olIJsyT6wny\nrNyzZ03gMUFI+1Oi2gQAhjE7+lyNGY3xVjZ6M5h+BEC0eslOuqHsM5r7EIneNJhL\nGUFqr1LUlQ33kB+UigODp/R7rcpg+c0jwFeN3WTm5CmSA9qUCudF07rkWCns/6UB\n2NZZje9EFF2t2TSlsLsgn7jkAv5sbFCvxvgMZjqwpk6zN+PMHfOvDZBhhYOxou4r\nP9VO+NNvtfH0RWnBAymaci+SXFm87/1V0mW9IQy8wQKBgQDgyNmaKAhgGrxPLLBH\nHa/Z0DFvxwZOL6hFF+LVUr2P11FzWoEbpC1ZL9DFanVN6pKG1KlnGjR5ZOllvRou\nbg4/lJXM/GPATJiYDaZ2oSgAaOIsS8+KwNSJVZ1NHMepk3x4CGtXFaVepoUKHpgq\n8LYLBVZbjLnINwNnXpNEWqK14QKBgQC1kBtEpvEc7eaEhqF5bLbvsMtIY3aEVDRm\n1TQS8NyQhriVVC75zul8pFF5BlC+Mz5cpTlFm08Jx3UpuQln/tx8PN3ztvWC0h5w\nICWp+PN/kqHUQAhA5zTvzAcrh79rCKtGS5XHfUSzDc9WLwwgdrmTMsQ5x8Bfg4lR\nIl06viw41wKBgQC0lyibfQYdj90yDskgmW0qJOVS1CbwscESoXoPwIWjBm3dqxyG\nxIPaX1vu/vR3QLmvsTLYLmlyDeylXCOooaq40fr30N2jJOaDYpQWQqsMiTcMN2vq\nIbmfDDVwOmr+hgs9tCXotO9C961yz9mYxgK7H/KdYpXvkKMfbRALnnWSgQKBgHnx\ntO7SNWUZv9bI2dFFHEU2eAJBk4tjRuK+VcBW9702Tuk05mwv9ZAaiQIBJN/qaPsu\nmZ3PpzFJPr7sIY4wlgP3mZckDhd0aq8iWEmmBF1trbVx4Fk/MMXSQgqRnRYVd3u6\nLnoS/75HCze2V63CL/fWhAbOy70bCnJs4zMeIXN3AoGAfXEWVvTISpYMeyCg/FSB\ndQtI4x2Yi++AJ2l3W6s3TJ3KX3QD57P9B2zhy0yJLkLndKo9SU+sJw/aqMWxhezO\n61olBgXBJR5gxA3ySVzHx7G0aGM0MFzp14Rah2pvgOxYxYo3XP2qQ3eL3sM867bI\nsXCc83+v5dVSRfpLTcQ4+Ic=\n-----END PRIVATE KEY-----\n",
+                "client_email" => "laravel-access@laravel-gcs-project.iam.gserviceaccount.com",
+                "client_id" => "111150319775402435194",
+                "auth_uri" => "https=>//accounts.google.com/o/oauth2/auth",
+                "token_uri" => "https=>//oauth2.googleapis.com/token",
+                "auth_provider_x509_cert_url" => "https=>//www.googleapis.com/oauth2/v1/certs",
+                "client_x509_cert_url" => "https=>//www.googleapis.com/robot/v1/metadata/x509/laravel-access%40laravel-gcs-project.iam.gserviceaccount.com",
+                "universe_domain" => "googleapis.com"
     ],
 
     'bucket' => env('GCS_BUCKET', 'laravel-media-storage-2026'),
