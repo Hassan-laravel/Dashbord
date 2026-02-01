@@ -104,13 +104,14 @@ git status
 git add .
 git commit -m "Setup Cloudinary for image hosting"
 git push origin main --force
-
+git rebase --continue
 git add -f storage/app/google-auth.json
 git pull origin main --rebase
 git rm --cached storage/app/google-auth.json
 git commit -m "Remove secret key and ignore it"
 git push
 GitHub secrets
+ipconfig /flushdns
 [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes((Get-Content -Raw .\storage\app\google-auth.json)))
 php artisan tinker
 https://tableplus.com/ 

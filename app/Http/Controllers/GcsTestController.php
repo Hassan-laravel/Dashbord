@@ -109,120 +109,43 @@ class GcsTestController extends Controller
     /**
      * اختبار الاتصال بـ Google Cloud Storage
      */
-    public function testConnection(): JsonResponse
-    {
-        try {
-            $keyFile = env('GCS_KEY_FILE');
-            $projectId = env('GCS_PROJECT_ID');
-            $bucket = env('GCS_BUCKET');
+public function testConnection(): JsonResponse
+{
+    try {
+        // بدلاً من فحص env مباشرة، نسحب الإعدادات التي جهزناها في config
+        $gcsConfig = config('filesystems.disks.gcs');
 
-            // التحقق من المتغيرات البيئية
-            if (!$keyFile || !$projectId || !$bucket) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'المتغيرات البيئية غير مكتملة',
-                    'config' => [
-                        'key_file' => $keyFile ? 'موجود' : 'غير موجود',
-                        'project_id' => $projectId ? 'موجود' : 'غير موجود',
-                        'bucket' => $bucket ? 'موجود' : 'غير موجود'
-                    ]
-                ], 400);
-            }
+        $projectId = $gcsConfig['project_id'] ?? null;
+        $bucket = $gcsConfig['bucket'] ?? null;
+        $keyFile = $gcsConfig['key_file'] ?? null;
 
-            // دعم ثلاث طرق لتمرير بيانات الاعتماد في GCS_KEY_FILE:
-            // 1) مسار داخل المشروع: storage/app/google-auth.json
-            // 2) JSON خام ملصوق مباشرة
-            // 3) Base64-encoded JSON
-            $decoded = null;
-            $keySource = null; // file | env_raw | env_base64
-            $fullPath = null;
-
-            // Trim whitespace
-            $keyFile = trim($keyFile);
-
-            $possiblePath = base_path($keyFile);
-            if (file_exists($possiblePath)) {
-                $fullPath = $possiblePath;
-                $content = file_get_contents($fullPath);
-                $decoded = json_decode($content, true);
-                $keySource = 'file';
-            } else {
-                // محاولة JSON خام
-                $decoded = json_decode($keyFile, true);
-                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-                    $keySource = 'env_raw';
-                } else {
-                    // محاولة Base64
-                    // Remove whitespace from base64 string
-                    $cleanBase64 = str_replace(["\n", "\r", " ", "\t"], '', $keyFile);
-                    $base = base64_decode($cleanBase64, true);
-                    if ($base !== false) {
-                        $decodedCandidate = json_decode($base, true);
-                        if (json_last_error() === JSON_ERROR_NONE && is_array($decodedCandidate)) {
-                            $decoded = $decodedCandidate;
-                            $keySource = 'env_base64';
-                        }
-                    }
-                }
-            }
-
-            if (!$decoded) {
-                // Debug info for base64 decoding failures
-                $debugInfo = [];
-                if (env('APP_DEBUG')) {
-                    $cleanBase64 = str_replace(["\n", "\r", " ", "\t"], '', $keyFile);
-                    $base64Decoded = base64_decode($cleanBase64, true);
-                    $debugInfo = [
-                        'key_file_length' => strlen($keyFile),
-                        'clean_base64_length' => strlen($cleanBase64),
-                        'base64_decode_result' => $base64Decoded !== false ? 'decoded_successfully' : 'base64_decode_failed',
-                        'json_decode_error' => json_last_error_msg(),
-                        'attempted_path_exists' => file_exists(base_path($keyFile)),
-                        'base_path' => base_path(),
-                        'storage_contents' => glob(storage_path('app/*'))
-                    ];
-                }
-
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'ملف المفاتيح غير موجود أو غير صالح. تأكد من قيمة GCS_KEY_FILE (path, raw JSON أو base64).',
-                    'key_file_value_preview' => substr($keyFile, 0, 200),
-                    'key_file_source_attempted' => $keySource,
-                    'full_path' => $fullPath,
-                    'debug' => $debugInfo
-                ], 400);
-            }
-
-            // محاولة الاتصال
-            $disk = Storage::disk('gcs');
-            $files = $disk->listContents('/');
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'تم الاتصال بـ Google Cloud Storage بنجاح',
-                'config' => [
-                    'project_id' => $projectId,
-                    'bucket' => $bucket,
-                    'key_file_source' => $keySource,
-                    'key_file_path' => $fullPath,
-                    'files_count' => iterator_count($files),
-                    'service_account' => $decoded['client_email'] ?? 'Unknown'
-                ]
-            ]);
-
-        } catch (Exception $e) {
-            \Log::error('GCS Connection Test Error: ' . $e->getMessage());
-
+        // التحقق من أن الإعدادات وصلت للارافل بنجاح
+        if (!$keyFile || !$projectId || !$bucket) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'فشل الاتصال بـ Google Cloud Storage',
-                'error' => $e->getMessage(),
-                'debug' => env('APP_DEBUG') ? [
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
-                    'trace' => $e->getTraceAsString()
-                ] : null
-            ], 500);
+                'message' => 'المتغيرات البيئية غير مكتملة في ملف config',
+                'config_preview' => [
+                    'key_file' => $keyFile ? 'موجود (Array/Path)' : 'غير موجود',
+                    'project_id' => $projectId ? 'موجود' : 'غير موجود',
+                    'bucket' => $bucket ? 'موجود' : 'غير موجود'
+                ]
+            ], 400);
         }
-    }
+
+        // محاولة الاتصال باستخدام Disk المعرف في لارافل
+        $disk = Storage::disk('gcs');
+        $files = $disk->listContents('/');
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'تم الاتصال بـ Google Cloud Storage بنجاح',
+            'details' => [
+                'project_id' => $projectId,
+                'bucket' => $bucket,
+                'files_found' => is_array($files) ? count($files) : 'N/A'
+            ]
+        ]);
+
+    } catch (Exception $e) {
+        // ... بقية كود الـ catch كما هو
 }
