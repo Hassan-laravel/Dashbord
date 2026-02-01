@@ -11,40 +11,30 @@ trait HandlesGcsImage
     /**
      * رفع صورة إلى Google Cloud Storage
      */
-    public function uploadImageToGcs(UploadedFile $file, string $folder = 'uploads'): ?array
-    {
-        try {
-            // التحقق من صحة الملف
-            if (!$file->isValid()) {
-                return null;
-            }
-
-            // رفع الملف
-            $path = Storage::disk('gcs')->putFile($folder, $file);
-
-            if (!$path) {
-                return null;
-            }
-
-            // توليد الرابط
-            $url = Storage::disk('gcs')->url($path);
-
-            return [
-                'path' => $path,
-                'url' => $url,
-                'filename' => $file->getClientOriginalName(),
-                'size' => $file->getSize(),
-                'mime_type' => $file->getMimeType()
-            ];
-
-        } catch (Exception $e) {
-            \Log::error('GCS Upload Error: ' . $e->getMessage(), [
-                'file' => $file->getClientOriginalName(),
-                'exception' => $e
-            ]);
-            return null;
+public function uploadImageToGcs(UploadedFile $file, string $folder = 'uploads'): ?array
+{
+    try {
+        if (!$file->isValid()) {
+            throw new \Exception("File is not valid: " . $file->getErrorMessage());
         }
+
+        // إجبار الرفع مع خاصية public وتحديد القرص بدقة
+        $path = Storage::disk('gcs')->putFile($folder, $file, 'public');
+
+        if (!$path) {
+            throw new \Exception("Storage::disk('gcs')->putFile returned false");
+        }
+
+        return [
+            'path' => $path,
+            'url' => Storage::disk('gcs')->url($path),
+        ];
+
+    } catch (\Exception $e) {
+        // بدلاً من return null، سنرمي الخطأ لكي يظهر في الـ Controller
+        throw $e;
     }
+}
 
     /**
      * حذف صورة من Google Cloud Storage

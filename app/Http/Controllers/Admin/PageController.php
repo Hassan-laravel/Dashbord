@@ -36,25 +36,28 @@ class PageController extends Controller
         ]);
 
         DB::beginTransaction();
-        try {
-            $data = $request->except(['image']);
-            $data['user_id'] = Auth::id();
+// داخل PageController.php في دالة store
 
-            if ($request->hasFile('image')) {
-                $imageResult = $this->uploadImageToGcs($request->file('image'), 'pages');
-                if ($imageResult) {
-                    $data['image'] = $imageResult['path'];
-                }
-            }
+try {
+    $data = $request->except(['image']);
+    $data['user_id'] = Auth::id();
 
-            Page::create($data);
-
-            DB::commit();
-            return redirect()->route('admin.pages.index')->with('success', __('dashboard.messages.success'));
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', $e->getMessage())->withInput();
+    if ($request->hasFile('image')) {
+        // إذا فشل الرفع هنا، سينتقل الكود فوراً للـ catch ويظهر لك الخطأ الحقيقي
+        $imageResult = $this->uploadImageToGcs($request->file('image'), 'pages');
+        if ($imageResult) {
+            $data['image'] = $imageResult['path'];
         }
+    }
+
+    Page::create($data);
+    DB::commit();
+    // ...
+} catch (\Exception $e) {
+    DB::rollBack();
+    // هنا سيظهر لك الخطأ الحقيقي في أعلى الصفحة
+    return back()->with('error', "GCS Error: " . $e->getMessage())->withInput();
+}
     }
 
     public function edit(Page $page)
