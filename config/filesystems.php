@@ -62,7 +62,41 @@ return [
 'gcs' => [
     'driver' => 'gcs',
     'project_id' => env('GCS_PROJECT_ID'),
-    'key_file' => env('GCS_KEY_FILE') ? json_decode(file_get_contents(base_path(env('GCS_KEY_FILE'))), true) : null,
+    // Allow GCS credentials to be provided either as:
+    // 1) a relative path (e.g. storage/app/google-auth.json),
+    // 2) a raw JSON string (paste the JSON into the GCS_KEY_FILE env),
+    // 3) a base64-encoded JSON string.
+    'key_file' => (function () {
+        $gcsKey = env('GCS_KEY_FILE');
+        if (!$gcsKey) {
+            return null;
+        }
+
+        // 1) If it looks like a path on the project, try reading it
+        $possiblePath = base_path($gcsKey);
+        if (file_exists($possiblePath)) {
+            $content = file_get_contents($possiblePath);
+            $decoded = json_decode($content, true);
+            return $decoded ?: null;
+        }
+
+        // 2) Try decoding as raw JSON
+        $decoded = json_decode($gcsKey, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            return $decoded;
+        }
+
+        // 3) Try decoding as base64-encoded JSON
+        $base = base64_decode($gcsKey, true);
+        if ($base !== false) {
+            $decodedBase = json_decode($base, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decodedBase)) {
+                return $decodedBase;
+            }
+        }
+
+        return null;
+    })(),
     'bucket' => env('GCS_BUCKET'),
     'path_prefix' => env('GCS_PATH_PREFIX', ''),
     'storage_api_uri' => env('GCS_STORAGE_API_URI', null),

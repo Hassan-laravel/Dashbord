@@ -21,26 +21,66 @@ ssh user@cloud-laravel.com
 cd /path/to/your/project
 ```
 
+> ملاحظة خاصة ببيئة **Laravel Cloud**: إذا كان مشروعك مستضافًا على Laravel Cloud فغالبًا لا تتوفر لديك صلاحية SSH أو ملف مدير (File Manager) لأن الملفات تُزامن مباشرةً من مستودع GitHub. في هذه الحالة يجب توفير بيانات اعتماد GCS عبر متغيرات البيئة في لوحة تحكم Laravel Cloud (أو عبر GitHub repository secrets المربوطة)، وليس برفع ملف `google-auth.json` يدوياً إلى السيرفر.
+
+
 ### 4️⃣ رفع ملف المفاتيح
 
-**الطريقة الأولى: عبر SCP (من جهازك)**
+**الطريقة الأولى (تقليدية): عبر SCP (من جهازك)**
 ```bash
 scp storage/app/google-auth.json user@cloud-laravel.com:/path/to/project/storage/app/
 ```
 
-**الطريقة الثانية: عبر File Manager في لوحة التحكم**
-- اذهب إلى File Manager
-- انتقل إلى `storage/app/`
-- رفع الملف `google-auth.json`
+**ملاحظة Laravel Cloud (لا يمكن رفع الملف يدوياً):**
+- إذا استضافت تطبيقك على Laravel Cloud، لا ترفع الملف يدويًا، بل ضع بيانات الاعتماد إما كـ raw JSON أو كـ Base64 في متغير البيئة `GCS_KEY_FILE` عبر لوحة Laravel Cloud أو GitHub secrets.
 
-### 5️⃣ تحديث `.env` على السيرفر
-أضف أو عدّل هذه الأسطر:
+### طرق تقديم بيانات الاعتماد (قيمة `GCS_KEY_FILE`)
+1. مسار نسبي داخل المشروع (مثال: `storage/app/google-auth.json`) — يعمل فقط إذا رفعت الملف إلى المستودع.
+2. النص الكامل لـ JSON (الصقه مباشرة في قيمة المتغير) — قد يواجهك مشكلات مع الأسطر في بعض لوحات التحكم.
+3. أفضل خيار: **Base64-encoded JSON** (سطر واحد) لتجنب مشاكل الأسطر والاقتباسات.
+
+مثال: قيمة `GCS_KEY_FILE` ستكون مثل:
+```env
+GCS_KEY_FILE=eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogIm15LXByb2plY3QiLCAuLi59
+```
+
+تابع القسم أدناه لمعرفة كيفية توليد سلسلة Base64 محلياً والنشر على Laravel Cloud.
+
+### 5️⃣ تحديث المتغيرات البيئية (`.env`) أو لوحة Laravel Cloud
+
+إذا تعمل على خادم تقليدي مع إمكانية تعديل الملفات على السيرفر، ضع هذه القيم في ملف `.env`:
+
 ```env
 FILESYSTEM_DISK=gcs
 GCS_PROJECT_ID=laravel-gcs-project
 GCS_BUCKET=laravel-media-storage-2026
 GCS_KEY_FILE=storage/app/google-auth.json
 ```
+
+إذا استضافت التطبيق على **Laravel Cloud** (بدون SSH) فضع المتغيرات نفسها عبر لوحة التحكم (Environment Variables) أو عبر GitHub secrets المربوطة. بالنسبة لقيمة `GCS_KEY_FILE` يمكنك استخدام أي من الصيغ الثلاث:
+
+- مسار نسبي داخل المشروع: `storage/app/google-auth.json` (يعمل فقط إن رفعت الملف إلى المستودع).
+- النص الكامل لملف JSON (الصقه مباشرة).
+- سلسلة Base64 للـ JSON (موصى به لتجنب مشاكل الأسطر والاقتباسات).
+
+#### توليد Base64 محلياً
+Linux / macOS:
+```bash
+base64 -w 0 storage/app/google-auth.json
+```
+
+Windows PowerShell (سطر واحد):
+```powershell
+[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes((Get-Content -Raw .\storage\app\google-auth.json)))
+```
+
+انسخ الناتج وألصقه كقيمة للمتغير `GCS_KEY_FILE` في لوحة Laravel Cloud. مثال:
+
+```env
+GCS_KEY_FILE=BASE64_ENCODED_STRING_HERE
+```
+
+بعد تحديث متغيرات البيئة في لوحة التحكم، **أعد نشر (redeploy)** التطبيق عبر واجهة Laravel Cloud حتى تُحمَل المتغيرات الجديدة.
 
 ### 6️⃣ تعيين الأذونات
 ```bash
