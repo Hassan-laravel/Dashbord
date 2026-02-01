@@ -30,10 +30,11 @@ public function uploadImageToGcs(UploadedFile $file, string $folder = 'uploads')
             'url' => Storage::disk('gcs')->url($path),
         ];
 
-    } catch (\Exception $e) {
-        // بدلاً من return null، سنرمي الخطأ لكي يظهر في الـ Controller
-        throw $e;
-    }
+ } catch (Exception $e) {
+    // هذا السطر سيسجل السبب الحقيقي في ملف لارافل (مثل SSL error أو Timeout)
+    \Log::error('Full GCS Error: ' . $e->getMessage());
+    throw $e;
+}
 }
 
     /**
