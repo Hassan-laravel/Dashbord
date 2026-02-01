@@ -62,11 +62,9 @@ return [
 'gcs' => [
     'driver' => 'gcs',
     'project_id' => env('GCS_PROJECT_ID', 'laravel-gcs-project'),
-    
-    // تعديل لضمان قراءة الـ Base64 بشكل صحيح حتى لو كان هناك مسافات
-    'key_file' => env('GCS_KEY_BASE64') 
-        ? json_decode(base64_decode(trim(env('GCS_KEY_BASE64'))), true) 
-        : (env('GCS_KEY_FILE') ? storage_path('app/' . env('GCS_KEY_FILE')) : null),
+
+    // هذا السطر يخبر لارافل أن يبحث عن الملف داخل مجلد storage/app
+    'key_file' => storage_path('app/google-auth.json'),
 
     'bucket' => env('GCS_BUCKET', 'laravel-media-storage-2026'),
     'path_prefix' => env('GCS_PATH_PREFIX', ''),
