@@ -146,11 +146,11 @@ class PostController extends Controller
 
             $post->update($data);
 
-            // if ($request->has('categories')) {
-            //     $post->categories()->sync($request->categories);
-            // } else {
-            //     $post->categories()->detach();
-            // }
+            if ($request->has('categories')) {
+                $post->categories()->sync($request->categories);
+            } else {
+                $post->categories()->detach();
+            }
 
             if ($request->hasFile('gallery')) {
                 foreach ($request->file('gallery') as $file) {
