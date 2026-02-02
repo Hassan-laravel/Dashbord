@@ -120,7 +120,7 @@ class PostController extends Controller
         return view('admin.posts.edit', compact('post', 'categories'));
     }
 
-public function update(Request $request, Post $post) // غيرنا النوع هنا
+  public function update(Request $request, Post $post) // غيرنا النوع هنا
 {
     $locale = app()->getLocale();
     $postId = $post->id;
@@ -133,20 +133,47 @@ public function update(Request $request, Post $post) // غيرنا النوع ه
         'categories' => 'nullable|array',
         'image' => 'nullable|image|max:2048',
     ]);
+        DB::beginTransaction();
+        try {
+            $data = $request->except(['image', 'gallery', 'categories']);
 
-    DB::beginTransaction();
-    try {
-        $data = $request->except(['image', 'gallery', 'categories', '_token', '_method']);
+            if ($request->hasFile('image')) {
+                $imageResult = $this->updateImageInGcs($post->image ?? '', $request->file('image'), 'posts/featured');
+                if ($imageResult) {
+                    $data['image'] = $imageResult['path'];
+                }
+            }
 
-        // ... بقية الكود الخاص بالرفع والـ sync ...
+            $post->update($data);
 
-        DB::commit();
-        return redirect()->route('admin.posts.index')->with('success', 'تم التحديث');
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return back()->with('error', $e->getMessage());
+            // if ($request->has('categories')) {
+            //     $post->categories()->sync($request->categories);
+            // } else {
+            //     $post->categories()->detach();
+            // }
+
+            if ($request->hasFile('gallery')) {
+                foreach ($request->file('gallery') as $file) {
+                    $imageResult = $this->uploadImageToGcs($file, 'posts/gallery');
+                    if ($imageResult) {
+                        PostImage::create([
+                            'post_id' => $post->id,
+                            'image_path' => $imageResult['path'],
+                        ]);
+                    }
+                }
+            }
+
+            DB::commit();
+            // التعديل هنا
+            return redirect()->route('admin.posts.index')
+                ->with('success', __('dashboard.messages.post_updated'));
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // هذا السطر سيطبع لك الخطأ الحقيقي بدلاً من 500
+            return response()->json(['error' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
+        }
     }
-}
 
     public function destroy(Post $post)
     {
