@@ -51,7 +51,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // إدارة المقالات (CRUD) - متاحة للمحرر والمدير
     // (يتم التحكم بالحذف والوصول الدقيق عبر الصلاحيات داخل Controller أو Blade)
     Route::resource('posts', PostController::class);
-
+Route::delete('posts/image/{id}', [PostController::class, 'deleteImage'])->name('posts.image.destroy');
 
     // ب) مسارات خاصة بالمدير العام فقط (Super Admin)
     // ---------------------------------------------------

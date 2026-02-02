@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Page;
+use App\Models\PostImage;
 use App\Traits\HandlesGcsImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -37,28 +38,28 @@ class PageController extends Controller
         ]);
 
         DB::beginTransaction();
-// داخل PageController.php في دالة store
+        // داخل PageController.php في دالة store
 
-try {
-    $data = $request->except(['image']);
-    $data['user_id'] = Auth::id();
+        try {
+            $data = $request->except(['image']);
+            $data['user_id'] = Auth::id();
 
-    if ($request->hasFile('image')) {
-        // إذا فشل الرفع هنا، سينتقل الكود فوراً للـ catch ويظهر لك الخطأ الحقيقي
-        $imageResult = $this->uploadImageToGcs($request->file('image'), 'pages');
-        if ($imageResult) {
-            $data['image'] = $imageResult['path'];
+            if ($request->hasFile('image')) {
+                // إذا فشل الرفع هنا، سينتقل الكود فوراً للـ catch ويظهر لك الخطأ الحقيقي
+                $imageResult = $this->uploadImageToGcs($request->file('image'), 'pages');
+                if ($imageResult) {
+                    $data['image'] = $imageResult['path'];
+                }
+            }
+
+            Page::create($data);
+            DB::commit();
+            // ...
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // هنا سيظهر لك الخطأ الحقيقي في أعلى الصفحة
+            return back()->with('error', "GCS Error: " . $e->getMessage())->withInput();
         }
-    }
-
-    Page::create($data);
-    DB::commit();
-    // ...
-} catch (\Exception $e) {
-    DB::rollBack();
-    // هنا سيظهر لك الخطأ الحقيقي في أعلى الصفحة
-    return back()->with('error', "GCS Error: " . $e->getMessage())->withInput();
-}
     }
 
     public function edit(Page $page)
@@ -105,4 +106,5 @@ try {
         $page->delete();
         return back()->with('success', __('dashboard.messages.success'));
     }
+
 }

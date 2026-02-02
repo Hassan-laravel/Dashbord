@@ -187,4 +187,22 @@ class PostController extends Controller
         // التعديل هنا
         return back()->with('success', __('dashboard.messages.post_deleted'));
     }
+        public function deleteImage($id)
+    {
+        try {
+            $image = PostImage::findOrFail($id);
+
+            // 1. حذف الصورة من Google Cloud Storage باستخدام التريت الخاص بك
+            if ($image->image_path) {
+                $this->deleteImageFromGcs($image->image_path);
+            }
+
+            // 2. حذف السجل من قاعدة البيانات
+            $image->delete();
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
 }
