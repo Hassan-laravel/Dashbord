@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login - News CMS</title>
+    <title>{{ __('dashboard.auth.login_title') }} - News CMS</title>
     @if(config('language.supported.' . app()->getLocale() . '.dir') == 'rtl')
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css">
     @else
@@ -21,7 +21,7 @@
 <div class="card login-card">
     <div class="login-header">
         <h4 class="mb-0 fw-bold">News CMS</h4>
-        <small>لوحة تحكم الإدارة</small>
+        <small>{{ __('dashboard.auth.admin_panel') }}</small>
     </div>
     <div class="card-body p-4">
 
@@ -39,26 +39,27 @@
         <form action="{{ route('login.post') }}" method="POST">
             @csrf
             <div class="mb-3">
-                <label class="form-label">البريد الإلكتروني</label>
+                <label class="form-label">{{ __('dashboard.auth.email') }}</label>
                 <input type="email" name="email" class="form-control" placeholder="admin@app.com" required>
             </div>
             <div class="mb-3">
-                <label class="form-label">كلمة المرور</label>
+                <label class="form-label">{{ __('dashboard.auth.password') }}</label>
                 <input type="password" name="password" class="form-control" required>
             </div>
             <div class="mb-3 form-check">
                 <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                <label class="form-check-label" for="remember">تذكرني</label>
+                <label class="form-check-label" for="remember">{{ __('dashboard.auth.remember_me') }}</label>
             </div>
-            <button type="submit" class="btn btn-primary w-100">دخول</button>
+            <button type="submit" class="btn btn-primary w-100">{{ __('dashboard.auth.login_btn') }}</button>
         </form>
     </div>
     <div class="card-footer text-center bg-white py-3 border-0">
         <small class="text-muted">&copy; {{ date('Y') }} News CMS</small>
-        {{-- رابط تبديل اللغة --}}
+        {{-- روابط تبديل اللغة --}}
         <div class="mt-2">
-            <a href="{{ route('switch.language', 'ar') }}" class="text-decoration-none mx-1">العربية</a> |
-            <a href="{{ route('switch.language', 'en') }}" class="text-decoration-none mx-1">English</a>
+            <a href="{{ route('switch.language', 'ar') }}" class="text-decoration-none mx-1 {{ app()->getLocale() == 'ar' ? 'fw-bold' : '' }}">العربية</a> |
+            <a href="{{ route('switch.language', 'en') }}" class="text-decoration-none mx-1 {{ app()->getLocale() == 'en' ? 'fw-bold' : '' }}">English</a> |
+            <a href="{{ route('switch.language', 'nl') }}" class="text-decoration-none mx-1 {{ app()->getLocale() == 'nl' ? 'fw-bold' : '' }}">Nederlands</a>
         </div>
     </div>
 </div>

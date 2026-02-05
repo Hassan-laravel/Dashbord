@@ -44,6 +44,7 @@ return [
         'no_image' => 'بلا صورة',
         'no_results' => 'لا توجد نتائج تطابق بحثك',
         'all_statuses' => 'كل الحالات',
+        'welcome_msg' => 'مرحباً بك يا <strong>:name</strong> في لوحة التحكم.',
     ],
 
     // 2. القائمة الجانبية
@@ -149,7 +150,7 @@ return [
         'post_deleted' => 'تم حذف المقال بنجاح',
         //اعدادات
         'settings_updated' => 'تم تحديث الاعدادات بنجاح',
-        
+
     ],
     'settings' => [
         'title' => 'إعدادات الموقع',
@@ -162,6 +163,9 @@ return [
         'save_settings' => 'حفظ الإعدادات',
         'on' => 'مفعل',
         'off' => 'معطل',
+        'translated_content' => 'المحتوى المترجم',
+        'system_settings' => 'إعدادات النظام',
+        'save_settings' => 'حفظ الإعدادات',
     ],
     'pages' => [
         'title' => 'إدارة الصفحات',
@@ -171,5 +175,13 @@ return [
         'page_title' => 'عنوان الصفحة',
         'content' => 'محتوى الصفحة',
         'featured_image' => 'صورة الصفحة',
+    ],
+    'auth' => [
+        'login_title' => 'تسجيل الدخول',
+        'admin_panel' => 'لوحة تحكم الإدارة',
+        'email' => 'البريد الإلكتروني',
+        'password' => 'كلمة المرور',
+        'remember_me' => 'تذكرني',
+        'login_btn' => 'دخول',
     ],
 ];

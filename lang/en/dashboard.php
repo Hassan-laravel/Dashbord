@@ -45,6 +45,7 @@ return [
         'no_image' => 'No Image',
         'no_results' => 'No results match your search',
         'all_statuses' => 'All Statuses',
+        'welcome_msg' => 'Welcome <strong>:name</strong> to the dashboard.',
     ],
 
     // 2. Navigation
@@ -85,7 +86,7 @@ return [
         'meta_description' => 'SEO Description / Keywords',
         'active' => 'Active',
         'inactive' => 'Inactive',
-         'all' => 'All Categories',
+        'all' => 'All Categories',
     ],
 
     // 5. Posts Section
@@ -147,7 +148,8 @@ return [
         'post_created' => 'Post created successfully',
         'post_updated' => 'Post updated successfully',
         'post_deleted' => 'Post deleted successfully',
-    ],'settings' => [
+    ],
+    'settings' => [
         'title' => 'Site Settings',
         'site_email' => 'Site Email',
         'site_logo' => 'Site Logo (Logo)',
@@ -158,6 +160,9 @@ return [
         'save_settings' => 'Save Settings',
         'on' => 'On',
         'off' => 'Off',
+        'translated_content' => 'Translated Content',
+        'system_settings' => 'System Settings',
+        'save_settings' => 'Save Settings',
     ],
     'pages' => [
         'title' => 'Pages Management',
@@ -167,5 +172,13 @@ return [
         'page_title' => 'Page Title',
         'content' => 'Page Content',
         'featured_image' => 'Featured Image',
+    ],
+    'auth' => [
+        'login_title' => 'Login',
+        'admin_panel' => 'Admin Control Panel',
+        'email' => 'Email Address',
+        'password' => 'Password',
+        'remember_me' => 'Remember Me',
+        'login_btn' => 'Login',
     ],
 ];

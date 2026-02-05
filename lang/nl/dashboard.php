@@ -39,6 +39,7 @@ return [
         'no_image' => 'Geen afbeelding',
         'no_results' => 'Geen resultaten gevonden voor uw zoekopdracht',
         'all_statuses' => 'Alle statussen',
+        'welcome_msg' => 'Welkom <strong>:name</strong> op het dashboard.',
     ],
 
     // 2. Navigation (Navigatie)
@@ -149,6 +150,9 @@ return [
         'save_settings' => 'Instellingen opslaan',
         'on' => 'Aan',
         'off' => 'Uit',
+        'translated_content' => 'Vertaalde Inhoud',
+        'system_settings' => 'Systeeminstellingen',
+        'save_settings' => 'Instellingen Opslaan',
     ],
 
     // 8. Pages (Pagina's)
@@ -160,5 +164,13 @@ return [
         'page_title' => 'Paginatitel',
         'content' => 'Pagina inhoud',
         'featured_image' => 'Uitgelichte afbeelding',
+    ],
+    'auth' => [
+        'login_title' => 'Inloggen',
+        'admin_panel' => 'Beheerderspaneel',
+        'email' => 'E-mailadres',
+        'password' => 'Wachtwoord',
+        'remember_me' => 'Onthoud mij',
+        'login_btn' => 'Inloggen',
     ],
 ];

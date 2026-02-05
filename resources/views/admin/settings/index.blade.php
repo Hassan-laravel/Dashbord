@@ -13,7 +13,7 @@
         <div class="col-lg-8">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0 fw-bold"><i class="bi bi-translate me-2"></i> المحتوى المترجم</h6>
+                    <h6 class="mb-0 fw-bold"><i class="bi bi-translate me-2"></i> {{ __('dashboard.settings.translated_content') }}</h6>
                 </div>
                 <div class="card-body">
 
@@ -25,6 +25,7 @@
                                         data-bs-toggle="tab"
                                         data-bs-target="#lang-{{ $key }}"
                                         type="button">
+                                    {{-- عرض اسم اللغة المترجم إن وجد --}}
                                     {{ $lang['name'] }}
                                 </button>
                             </li>
@@ -35,7 +36,6 @@
                         @foreach(config('language.supported') as $key => $lang)
                             <div class="tab-pane fade {{ $loop->first ? 'show active' : '' }}" id="lang-{{ $key }}">
 
-                                {{-- استخدام translateOrNew لتجنب الأخطاء --}}
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">{{ __('dashboard.settings.site_name') }} ({{ $lang['name'] }})</label>
                                     <input type="text" class="form-control"
@@ -55,7 +55,6 @@
                                            name="{{ $key }}[copyright]"
                                            value="{{ $setting->translateOrNew($key)->copyright }}">
                                 </div>
-
                             </div>
                         @endforeach
                     </div>
@@ -73,7 +72,7 @@
                     @if($setting->site_logo)
                         <img src="{{ Storage::disk('gcs')->url($setting->site_logo) }}" class="img-fluid mb-3 rounded border p-1" style="max-height: 100px;">
                     @else
-                        <div class="bg-light border rounded p-3 text-muted mb-3">No Logo</div>
+                        <div class="bg-light border rounded p-3 text-muted mb-3">{{ __('dashboard.general.no_image') }}</div>
                     @endif
                     <input type="file" class="form-control form-control-sm" name="site_logo" accept="image/*">
                 </div>
@@ -81,7 +80,7 @@
 
             <div class="card shadow-sm border-0 mb-3">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0 fw-bold">إعدادات النظام</h6>
+                    <h6 class="mb-0 fw-bold">{{ __('dashboard.settings.system_settings') }}</h6>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
