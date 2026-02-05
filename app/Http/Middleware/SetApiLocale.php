@@ -14,16 +14,16 @@ class SetApiLocale
         // 1. الأولوية للغة القادمة من الرابط (?locale=en)
         // 2. إذا لم توجد، نرى الهيدر
         // 3. إذا لم يوجد، نأخذ اللغة الافتراضية 'ar'
-        $locale = $request->query('locale') ?? $request->header('Accept-Language') ?? 'ar';
+        $locale = $request->query('locale') ?? $request->header('Accept-Language') ?? 'en';
 
         // قائمة اللغات المدعومة في نظامك
-        $supportedLocales = ['ar', 'en']; // تأكد أن هذه تطابق config/language.php
+        $supportedLocales = ['ar', 'en','nl']; // تأكد أن هذه تطابق config/language.php
 
         // إذا كانت اللغة المطلوبة مدعومة، نعتمدها
         if (in_array($locale, $supportedLocales)) {
             App::setLocale($locale);
         } else {
-            App::setLocale('ar'); // Fallback
+            App::setLocale('en'); // Fallback
         }
 
         return $next($request);

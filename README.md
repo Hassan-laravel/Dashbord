@@ -1,40 +1,69 @@
-# 📰 News-cms (نظام إدارة الأخبار)
+# 📰 News & Articles Admin Dashboard (with JSON API)
 
-نظام متكامل لإدارة المحتوى الإخباري مبني باستخدام **Laravel 12** و **MySQL**. يتيح النظام إضافة الأخبار، تصنيفها، وإدارة الكتاب بشكل سهل وسريع.
+A professional Laravel-based management system for news, articles, and static pages. This project serves as a content hub that manages media via **Google Cloud Storage** and exports all database content as **JSON API endpoints**.
 
-## 🚀 المميزات (Features)
-* **لوحة تحكم (Admin Dashboard):** لإدارة المقالات والأقسام.
-* **نظام تصنيفات:** تنظيم الأخبار حسب النوع (سياسة، رياضة، تقنية).
-* **البحث المتقدم:** إمكانية البحث عن الأخبار بالكلمات المفتاحية.
-* **تصميم متجاوب:** يعمل بشكل ممتاز على الموبايل والكمبيوتر.
 
-## 🛠 التقنيات المستخدمة (Tech Stack)
-* **Framework:** Laravel 12
-* **Database:** MySQL
-* **Frontend:** Blade templates / Tailwind CSS (أو Bootstrap حسب ما استخدمت)
-* **Authentication:** Laravel Breeze/Jetstream (اختياري)
 
-## 💻 تعليمات التثبيت (Installation)
-
-إذا أراد مبرمج آخر تشغيل مشروعك، عليه اتباع هذه الخطوات:
-
-1. **تحميل المشروع:**
-   ```bash
-   git clone [https://github.com/Hassan-Web-Bulding/News-cms.git](https://github.com/Hassan-Web-Bulding/News-cms.git)
-   cd News-cms
-   2-composer install
-npm install && npm run dev
-3-إعداد قاعدة البيانات:
-
-قم بإنشاء قاعدة بيانات MySQL جديدة.
-
-انسخ ملف .env.example إلى .env.
-
-أضف بيانات قاعدة البيانات في ملف .env.
-4-تشغيل المشروع:
-php artisan key:generate
-php artisan migrate
-php artisan serve
+## 🌟 Key Features
+* **Article Management:** Full CRUD operations for news and blog posts.
+* **Categorization:** Dynamic category system for organizing content.
+* **JSON API Export:** All articles, categories, and pages are accessible via JSON links.
+* **Cloud Integration:** Native integration with **Google Cloud Storage (GCS)** for image hosting.
+* **Pre-configured Data:** Includes Seeders for immediate testing.
 
 ---
 
+## 🛠 Prerequisites
+Before installation, ensure you have:
+* **PHP:** >= 8.1
+* **Composer**
+* **Node.js & NPM**
+* **Database:** MySQL / PostgreSQL
+* **Google Cloud Account:** A service account JSON key and an active bucket.
+
+---
+
+## 📥 Installation Guide
+
+### 1. Clone the Repository
+```bash
+
+git clone (https://github.com/Hassan-laravel/Dashbord.git)
+cd your-repo-name
+2. Install PHP & JS Dependencies
+# Install Laravel packages
+composer install
+
+# Install and compile frontend assets
+npm install
+npm run build
+
+3. Environment Setup
+Copy the example environment file and generate your application key:
+cp .env.example .env
+php artisan key:generate
+
+4. Database & Seeding
+Configure your DB_* variables in the .env file, then run the migrations along with the seeders to populate categories and sample articles:
+php artisan migrate --seed
+
+
+5. Google Cloud Storage Configuration
+Add your credentials to the .env file to handle media:
+
+Place your JSON key file in storage/app/google-cloud-key.json.
+
+Update the following fields:
+
+مقتطف الرمز
+FILESYSTEM_DISK=gcs
+GCS_PROJECT_ID=your-gcp-project-id
+GCS_BUCKET=your-bucket-name
+GCS_KEY_FILE=storage/app/google-cloud-key.json
+
+🚀 Running the Project
+Start the local development server:
+php artisan serve
+Access the dashboard at http://127.0.0.1:8000.
+
+Pro Tip: Check DatabaseSeeder.php to find the default admin login credentials created during the seeding process.
