@@ -19,19 +19,29 @@ class StorePostRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-   public function rules(): array
-{
-    $locale = app()->getLocale();
-    return [
-        "$locale.title" => 'required|string|max:255',
-        "$locale.slug" => "nullable|string|max:255|unique:post_translations,slug",
-        "$locale.content" => 'required', // المحتوى
-        'categories' => 'required|array', // مصفوفة تصنيفات
-        'categories.*' => 'exists:categories,id',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // الصورة الرئيسية
-        'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // الصور الفرعية
-        'youtube_link' => 'nullable|url',
-        'status' => 'required|in:published,draft',
-    ];
-}
+    public function rules(): array
+    {
+        $locale = app()->getLocale();
+
+        return [
+            "$locale.title" => 'required|string|max:255',
+            "$locale.slug" => "nullable|string|max:255|unique:post_translations,slug",
+
+            // Content field
+            "$locale.content" => 'required',
+
+            // Array of category IDs
+            'categories' => 'required|array',
+            'categories.*' => 'exists:categories,id',
+
+            // Featured Image
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+
+            // Gallery/Secondary images
+            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+
+            'youtube_link' => 'nullable|url',
+            'status' => 'required|in:published,draft',
+        ];
+    }
 }

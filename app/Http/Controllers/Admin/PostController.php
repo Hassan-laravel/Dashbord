@@ -18,57 +18,57 @@ use Illuminate\Support\Facades\Storage;
 class PostController extends Controller
 {
     use HandlesGcsImage;
+
     public function index(Request $request)
     {
-        // 1. جلب التصنيفات لاستخدامها في القائمة المنسدلة
+        // 1. Fetch categories for the filter dropdown
         $categories = Category::all();
 
-        // 2. بناء الاستعلام
+        // 2. Build the query
         $query = Post::with(['translations', 'author', 'categories']);
 
-        // --- الفلترة ---
+        // --- Filtering ---
 
-        // أ) البحث بالعنوان (مترجم)
+        // A) Search by title (Translated)
         if ($request->filled('search')) {
             $query->whereTranslationLike('title', '%' . $request->search . '%');
         }
 
-        // ب) الفلترة بالتصنيف (Many-to-Many)
+        // B) Filter by category (Many-to-Many relationship)
         if ($request->filled('category_id')) {
             $query->whereHas('categories', function ($q) use ($request) {
                 $q->where('categories.id', $request->category_id);
             });
         }
 
-        // ج) الفلترة بالحالة
+        // C) Filter by status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // 3. الترتيب والتقسيم
+        // 3. Sorting and Pagination
         $posts = $query->latest()->paginate(10);
 
-        // 4. إذا كان الطلب AJAX (جاء من الفلتر)
+        // 4. Handle AJAX requests (from filters)
         if ($request->ajax()) {
-            // نرجع HTML فقط (الجدول + الترقيم)
+            // Return HTML only (table rows + pagination links)
             return response()->json([
                 'html' => view('admin.posts.partials.table_rows', compact('posts'))->render(),
-                'pagination' => (string) $posts->links() // نرسل الترقيم الجديد أيضاً
+                'pagination' => (string) $posts->links() // Send updated pagination links
             ]);
         }
 
-        // 5. الطلب العادي (أول مرة)
+        // 5. Standard request (initial load)
         return view('admin.posts.index', compact('posts', 'categories'));
     }
 
     public function create()
     {
-        // 1. جلب التصنيفات المفعلة فقط (status = 1 او true)
-        // 2. استخدام with('translations') لتحسين الأداء
+        // 1. Fetch only active categories (status = 1 or true)
+        // 2. Use with('translations') for better performance (Eager Loading)
         $categories = Category::with('translations')->where('status', true)->get();
 
-        // 3. التأكد من أن ملف العرض موجود في المسار الصحيح
-        // المسار: resources/views/admin/posts/create.blade.php
+        // 3. Ensure the view file exists at: resources/views/admin/posts/create.blade.php
         return view('admin.posts.create', compact('categories'));
     }
 
@@ -105,7 +105,8 @@ class PostController extends Controller
             }
 
             DB::commit();
-            // التعديل هنا: استخدام الترجمة للرسالة
+
+            // Redirect with translated success message
             return redirect()->route('admin.posts.index')
                 ->with('success', __('dashboard.messages.post_created'));
         } catch (\Exception $e) {
@@ -120,19 +121,20 @@ class PostController extends Controller
         return view('admin.posts.edit', compact('post', 'categories'));
     }
 
-  public function update(Request $request, Post $post) // غيرنا النوع هنا
-{
-    $locale = app()->getLocale();
-    $postId = $post->id;
+    public function update(Request $request, Post $post)
+    {
+        $locale = app()->getLocale();
+        $postId = $post->id;
 
-    // التحقق يدوياً كما في الصفحات
-    $request->validate([
-        "$locale.title" => 'required|string|max:255',
-        "$locale.slug" => "nullable|string|max:255|unique:post_translations,slug,{$postId},post_id",
-        'status' => 'required|in:published,draft',
-        'categories' => 'nullable|array',
-        'image' => 'nullable|image|max:2048',
-    ]);
+        // Manual validation for translated fields
+        $request->validate([
+            "$locale.title" => 'required|string|max:255',
+            "$locale.slug" => "nullable|string|max:255|unique:post_translations,slug,{$postId},post_id",
+            'status' => 'required|in:published,draft',
+            'categories' => 'nullable|array',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
         DB::beginTransaction();
         try {
             $data = $request->except(['image', 'gallery', 'categories']);
@@ -165,12 +167,12 @@ class PostController extends Controller
             }
 
             DB::commit();
-            // التعديل هنا
+
             return redirect()->route('admin.posts.index')
                 ->with('success', __('dashboard.messages.post_updated'));
         } catch (\Exception $e) {
             DB::rollBack();
-            // هذا السطر سيطبع لك الخطأ الحقيقي بدلاً من 500
+            // Return detailed error response for debugging
             return response()->json(['error' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
         }
     }
@@ -184,20 +186,21 @@ class PostController extends Controller
             $this->deleteImageFromGcs($img->image_path);
         }
         $post->delete();
-        // التعديل هنا
+
         return back()->with('success', __('dashboard.messages.post_deleted'));
     }
-        public function deleteImage($id)
+
+    public function deleteImage($id)
     {
         try {
             $image = PostImage::findOrFail($id);
 
-            // 1. حذف الصورة من Google Cloud Storage باستخدام التريت الخاص بك
+            // 1. Delete image from Google Cloud Storage using the Trait
             if ($image->image_path) {
                 $this->deleteImageFromGcs($image->image_path);
             }
 
-            // 2. حذف السجل من قاعدة البيانات
+            // 2. Delete the record from the database
             $image->delete();
 
             return response()->json(['success' => true]);

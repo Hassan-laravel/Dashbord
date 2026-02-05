@@ -10,24 +10,32 @@ class Post extends Model implements TranslatableContract
 {
     use Translatable;
 
+    // Attributes to be translated
     public $translatedAttributes = ['title', 'content', 'slug', 'meta_title', 'meta_description'];
 
-    // أضفنا youtube_link
+    // Added youtube_link to fillable attributes
     protected $fillable = ['user_id', 'image', 'youtube_link', 'status'];
 
-    // العلاقة أصبحت BelongsToMany
-public function categories()
+    /**
+     * Define the relationship with categories (Many-to-Many).
+     */
+    public function categories()
     {
-        // العلاقة يجب أن تكون belongsToMany
+        // This must be a belongsToMany relationship
         return $this->belongsToMany(Category::class, 'category_post');
     }
 
+    /**
+     * Define the relationship with the author.
+     */
     public function author()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // علاقة الصور الفرعية
+    /**
+     * Relationship for gallery/secondary images.
+     */
     public function images()
     {
         return $this->hasMany(PostImage::class);

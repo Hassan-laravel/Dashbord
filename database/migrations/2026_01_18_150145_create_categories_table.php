@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // 1. الجدول الأساسي
+        // 1. Main Table
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->boolean('status')->default(true); // مفعل أو لا
+            $table->boolean('status')->default(true); // Active or inactive
             $table->timestamps();
         });
 
-        // 2. جدول الترجمة
+        // 2. Translation Table
         Schema::create('category_translations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
@@ -26,13 +26,13 @@ return new class extends Migration
 
             $table->string('name');
 
-            // --- الإضافات الجديدة ---
-            $table->string('slug')->nullable()->index(); // Index لتسريع البحث
+            // --- New Additions ---
+            $table->string('slug')->nullable()->index(); // Index to speed up search queries
             $table->string('meta_title')->nullable();
             $table->text('meta_description')->nullable();
 
             $table->unique(['category_id', 'locale']);
-            $table->unique(['slug', 'locale']); // لضمان عدم تكرار الرابط في نفس اللغة
+            $table->unique(['slug', 'locale']); // To ensure unique slugs per locale
         });
     }
 
@@ -41,6 +41,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('category_translations');
+        Schema::create('categories');
     }
 };

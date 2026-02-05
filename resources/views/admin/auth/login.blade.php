@@ -25,7 +25,7 @@
     </div>
     <div class="card-body p-4">
 
-        {{-- عرض رسائل الخطأ --}}
+        {{-- Display error messages --}}
         @if ($errors->any())
             <div class="alert alert-danger">
                 <ul class="mb-0 small">
@@ -55,7 +55,8 @@
     </div>
     <div class="card-footer text-center bg-white py-3 border-0">
         <small class="text-muted">&copy; {{ date('Y') }} News CMS</small>
-        {{-- روابط تبديل اللغة --}}
+
+        {{-- Language switcher links --}}
         <div class="mt-2">
             <a href="{{ route('switch.language', 'ar') }}" class="text-decoration-none mx-1 {{ app()->getLocale() == 'ar' ? 'fw-bold' : '' }}">العربية</a> |
             <a href="{{ route('switch.language', 'en') }}" class="text-decoration-none mx-1 {{ app()->getLocale() == 'en' ? 'fw-bold' : '' }}">English</a> |

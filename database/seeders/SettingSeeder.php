@@ -12,19 +12,19 @@ class SettingSeeder extends Seeder
      */
     public function run(): void
     {
-        // نستخدم updateOrCreate للتأكد من وجود إعدادات واحدة فقط (ID = 1)
-        // إذا كان موجوداً سيتم تحديثه، وإذا لم يكن سيتم إنشاؤه
+        // We use updateOrCreate to ensure only one settings record exists (ID = 1)
+        // If it exists, it will be updated; otherwise, it will be created.
 
         Setting::updateOrCreate(
-            ['id' => 1], // الشرط: البحث عن الإعداد رقم 1
+            ['id' => 1], // Condition: Search for setting with ID 1
             [
-                // 1. البيانات الثابتة (settings table)
+                // 1. Static data (settings table)
                 'site_email' => 'admin@example.com',
-                'site_logo' => null, // يمكن وضع مسار صورة افتراضية هنا
+                'site_logo' => null, // A default image path can be placed here
                 'maintenance_mode' => false,
 
-                // 2. البيانات المترجمة (setting_translations table)
-                // تتيح الحزمة إضافة الترجمات مباشرة كمصفوفة باستخدام كود اللغة
+                // 2. Translated data (setting_translations table)
+                // The package allows adding translations directly as an array using the language code.
 
                 'ar' => [
                     'site_name' => 'اسم الموقع بالعربية',

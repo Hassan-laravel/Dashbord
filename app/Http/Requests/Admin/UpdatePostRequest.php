@@ -4,36 +4,40 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+
 class UpdatePostRequest extends FormRequest
 {
     /**
-     * تحديد ما إذا كان المستخدم مخولاً بعمل هذا الطلب.
+     * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        // 1. تأكد أن هذه true
+        // 1. Ensure this is set to true
         return true;
     }
 
     /**
-     * قواعد التحقق.
+     * Get the validation rules that apply to the request.
      */
     public function rules(): array
     {
         $locale = app()->getLocale();
 
-        // --- 2. التصحيح الأمني لجلب الـ ID ---
+        // --- 2. Security fix to retrieve the ID ---
         $post = $this->route('post');
-        // إذا كان $post كائناً نأخذ الـ id منه، وإذا كان رقماً نأخذه كما هو
+
+        // If $post is an object, we take the id from it; if it's a number, we take it as is
         $postId = $post instanceof \App\Models\Post ? $post->id : $post;
 
         return [
             "$locale.title" => 'required|string|max:255',
-            // استثناء المقال الحالي من فحص التكرار باستخدام الآيدي المستخرج
+
+            // Exclude the current post from the unique slug check using the extracted ID
             "$locale.slug" => "nullable|string|max:255|unique:post_translations,slug,{$postId},post_id",
+
             "$locale.content" => 'nullable',
 
-            // جعلنا التصنيفات اختيارية (nullable) لتجنب مشاكل إذا لم يختر المستخدم شيئاً
+            // Categories are made nullable to prevent issues if the user selects nothing
             'categories' => 'nullable|array',
             'categories.*' => 'exists:categories,id',
 

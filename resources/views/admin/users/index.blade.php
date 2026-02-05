@@ -72,7 +72,7 @@
     <div class="card-footer bg-white">{{ $users->links() }}</div>
 </div>
 
-{{-- مودال الإضافة والتعديل --}}
+{{-- add and edit model--}}
 <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">

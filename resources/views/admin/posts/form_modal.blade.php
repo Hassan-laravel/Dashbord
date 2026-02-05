@@ -2,13 +2,14 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">{{ __('dashboard.articles.add_article') }}</h5> {{-- عنوان المودال متغير حسب الحالة لاحقاً --}}
+                {{-- Modal title: will be dynamically changed based on the state (Add/Edit) later --}}
+                <h5 class="modal-title">{{ __('dashboard.articles.add_article') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="article-form">
 
-                    {{-- تبويبات اللغات --}}
+                    {{-- Language Tabs --}}
                     <ul class="nav nav-tabs mb-3" id="langTabs" role="tablist">
                         @foreach(config('language.supported') as $key => $lang)
                             <li class="nav-item" role="presentation">
@@ -23,12 +24,12 @@
                         @endforeach
                     </ul>
 
-                    {{-- محتوى التبويبات --}}
+                    {{-- Tab Content --}}
                     <div class="tab-content mb-3" id="langTabsContent">
                         @foreach(config('language.supported') as $key => $lang)
                             <div class="tab-pane fade {{ $loop->first ? 'show active' : '' }}" id="lang-{{ $key }}">
 
-                                {{-- حقل العنوان (مترجم) --}}
+                                {{-- Title Field (Translated) --}}
                                 <div class="mb-3">
                                     <label class="form-label">
                                         {{ __('dashboard.articles.article_title') }} ({{ $lang['name'] }})
@@ -37,7 +38,7 @@
                                            placeholder="{{ __('dashboard.articles.enter_title_placeholder', ['lang' => $lang['name']]) }}">
                                 </div>
 
-                                {{-- حقل المحتوى (مترجم) --}}
+                                {{-- Content Field (Translated) --}}
                                 <div class="mb-3">
                                     <label class="form-label">
                                         {{ __('dashboard.articles.content') }} ({{ $lang['name'] }})
@@ -50,7 +51,7 @@
 
                     <hr>
 
-                    {{-- الحقول العامة --}}
+                    {{-- General Fields --}}
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">{{ __('dashboard.articles.category') }}</label>

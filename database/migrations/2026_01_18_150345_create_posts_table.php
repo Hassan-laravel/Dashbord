@@ -8,28 +8,28 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // 1. الجدول الأساسي للمنشورات
+        // 1. Main Posts Table
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // الكاتب
-            $table->foreignId('category_id')->constrained()->onDelete('cascade'); // التصنيف
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Author
+            $table->foreignId('category_id')->constrained()->onDelete('cascade'); // Category
             $table->string('image')->nullable();
             $table->enum('status', ['published', 'draft'])->default('draft');
             $table->timestamps();
         });
 
-        // 2. جدول ترجمة المنشورات
+        // 2. Post Translations Table
         Schema::create('post_translations', function (Blueprint $table) {
             $table->id();
-            // هنا التغيير المهم: post_id بدلاً من article_id
+            // Important change: post_id instead of article_id
             $table->foreignId('post_id')->constrained()->onDelete('cascade');
             $table->string('locale')->index();
 
-            // البيانات المترجمة
+            // Translated Data
             $table->string('title');
             $table->text('content');
 
-            // حقول SEO والروابط
+            // SEO Fields and Slugs
             $table->string('slug')->nullable()->index();
             $table->string('meta_title')->nullable();
             $table->text('meta_description')->nullable();

@@ -64,7 +64,7 @@
     <div class="card-footer bg-white">{{ $categories->links() }}</div>
 </div>
 
-{{-- مودال التصنيفات --}}
+{{--Category model--}}
 <div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">

@@ -17,9 +17,9 @@
             </div>
         </div>
 
-        {{-- ============ قسم الفلاتر ============ --}}
+        {{-- ============ Filters Section ============ --}}
         <div class="row mt-4 g-2">
-            {{-- 1. بحث بالعنوان --}}
+            {{-- 1. Search by Title --}}
             <div class="col-md-4">
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
@@ -28,18 +28,18 @@
                 </div>
             </div>
 
-            {{-- 2. فلتر التصنيف --}}
+            {{-- 2. Category Filter --}}
             <div class="col-md-3">
                 <select id="filterCategory" class="form-select">
                     <option value="">{{ __('dashboard.categories.all') }}</option>
                     @foreach($categories as $cat)
-                        {{-- الاسم يظهر حسب لغة التطبيق الحالية --}}
+                        {{-- Name is displayed based on current application locale --}}
                         <option value="{{ $cat->id }}">{{ $cat->name }}</option>
                     @endforeach
                 </select>
             </div>
 
-            {{-- 3. فلتر الحالة --}}
+            {{-- 3. Status Filter --}}
             <div class="col-md-3">
                 <select id="filterStatus" class="form-select">
                     <option value="">{{ __('dashboard.general.all_statuses') }}</option>
@@ -48,7 +48,7 @@
                 </select>
             </div>
 
-            {{-- زر إعادة تعيين --}}
+            {{-- Reset Button --}}
             <div class="col-md-2">
                 <button type="button" class="btn btn-light w-100 border" onclick="resetFilters()">
                     <i class="bi bi-arrow-counterclockwise"></i> {{ __('dashboard.general.reset') }}
@@ -78,14 +78,14 @@
                     <th>{{ __('dashboard.general.actions') }}</th>
                 </tr>
             </thead>
-            {{-- استدعاء الملف الجزئي --}}
+            {{-- Include partial file for table rows --}}
             <tbody id="tableBody">
                 @include('admin.posts.partials.table_rows')
             </tbody>
         </table>
     </div>
 
-    {{-- منطقة الترقيم --}}
+    {{-- Pagination Area --}}
     <div class="card-footer bg-white" id="paginationLinks">
         {{ $posts->links() }}
     </div>
@@ -95,7 +95,7 @@
 
 @push('scripts')
 <script>
-    // تعريف العناصر
+    // Elements Definition
     const filterSearch = document.getElementById('filterSearch');
     const filterCategory = document.getElementById('filterCategory');
     const filterStatus = document.getElementById('filterStatus');
@@ -104,9 +104,12 @@
     const loadingSpinner = document.getElementById('loadingSpinner');
     const postsTable = document.getElementById('postsTable');
 
-    // دالة جلب البيانات (AJAX)
+    /**
+     * Data Fetching Function (AJAX)
+     * @param {number} page
+     */
     function fetchPosts(page = 1) {
-        // إظهار اللودر وتخفيف شفافية الجدول
+        // Show loader and reduce table opacity
         loadingSpinner.classList.remove('d-none');
         postsTable.style.opacity = '0.5';
 
@@ -117,7 +120,7 @@
             status: filterStatus.value
         });
 
-        // ملاحظة: الرابط هنا ثابت ولكن البيانات التي تعود تعتمد على لغة الجلسة
+        // Note: The URL is static, but returned data depends on the session locale
         fetch(`{{ route('admin.posts.index') }}?${params.toString()}`, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
@@ -136,7 +139,7 @@
         });
     }
 
-    // Events
+    // Event Listeners
     filterCategory.addEventListener('change', () => fetchPosts());
     filterStatus.addEventListener('change', () => fetchPosts());
 
@@ -148,6 +151,7 @@
         }, 500);
     });
 
+    // Handle AJAX Pagination clicks
     document.addEventListener('click', function(e) {
         if (e.target.closest('#paginationLinks a')) {
             e.preventDefault();

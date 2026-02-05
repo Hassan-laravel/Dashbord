@@ -9,66 +9,69 @@ use Exception;
 trait HandlesGcsImage
 {
     /**
-     * رفع صورة إلى Google Cloud Storage
+     * Upload an image to Google Cloud Storage
      */
-public function uploadImageToGcs(UploadedFile $file, string $folder = 'uploads'): ?array
-{
-    try {
-        if (!$file->isValid()) {
-            throw new \Exception("File is not valid: " . $file->getErrorMessage());
+    public function uploadImageToGcs(UploadedFile $file, string $folder = 'uploads'): ?array
+    {
+        try {
+            if (!$file->isValid()) {
+                throw new \Exception("File is not valid: " . $file->getErrorMessage());
+            }
+
+            // Force upload with public visibility and specify the GCS disk
+            $path = Storage::disk('gcs')->putFile($folder, $file, 'public');
+
+            if (!$path) {
+                throw new \Exception("Storage::disk('gcs')->putFile returned false");
+            }
+
+            return [
+                'path' => $path,
+                'url' => Storage::disk('gcs')->url($path),
+            ];
+
+        } catch (Exception $e) {
+            // This logs the actual root cause in Laravel logs (e.g., SSL error or Timeout)
+            \Log::error('Full GCS Error: ' . $e->getMessage());
+            throw $e;
         }
-
-        // إجبار الرفع مع خاصية public وتحديد القرص بدقة
-        $path = Storage::disk('gcs')->putFile($folder, $file, 'public');
-
-        if (!$path) {
-            throw new \Exception("Storage::disk('gcs')->putFile returned false");
-        }
-
-        return [
-            'path' => $path,
-            'url' => Storage::disk('gcs')->url($path),
-        ];
-
- } catch (Exception $e) {
-    // هذا السطر سيسجل السبب الحقيقي في ملف لارافل (مثل SSL error أو Timeout)
-    \Log::error('Full GCS Error: ' . $e->getMessage());
-    throw $e;
-}
-}
-
-    /**
-     * حذف صورة من Google Cloud Storage
-     */
-public function deleteImageFromGcs(string $path): bool
-{
-    try {
-        if (empty($path)) return false;
-        // تحقق من وجود الملف قبل محاولة الحذف
-        if (Storage::disk('gcs')->exists($path)) {
-            return Storage::disk('gcs')->delete($path);
-        }
-        return true; // نعتبرها ناجحة حتى لو لم يجد الملف لكي لا يتوقف الـ Controller
-    } catch (Exception $e) {
-        \Log::error('GCS Delete Error: ' . $e->getMessage());
-        return false;
     }
-}
 
     /**
-     * تحديث صورة (حذف القديمة ورفع الجديدة)
+     * Delete an image from Google Cloud Storage
+     */
+    public function deleteImageFromGcs(string $path): bool
+    {
+        try {
+            if (empty($path)) return false;
+
+            // Check if the file exists before attempting to delete
+            if (Storage::disk('gcs')->exists($path)) {
+                return Storage::disk('gcs')->delete($path);
+            }
+
+            // Return true even if the file is not found to prevent the Controller from stopping
+            return true;
+        } catch (Exception $e) {
+            \Log::error('GCS Delete Error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Update an image (Delete the old one and upload the new one)
      */
     public function updateImageInGcs(string $oldPath, UploadedFile $newFile, string $folder = 'uploads'): ?array
     {
         try {
-            // رفع الصورة الجديدة
+            // Upload the new image
             $uploadResult = $this->uploadImageToGcs($newFile, $folder);
 
             if (!$uploadResult) {
                 return null;
             }
 
-            // حذف الصورة القديمة
+            // Delete the old image
             if (!empty($oldPath)) {
                 $this->deleteImageFromGcs($oldPath);
             }
@@ -85,7 +88,7 @@ public function deleteImageFromGcs(string $path): bool
     }
 
     /**
-     * الحصول على رابط الصورة
+     * Get the image URL
      */
     public function getImageUrl(string $path): ?string
     {

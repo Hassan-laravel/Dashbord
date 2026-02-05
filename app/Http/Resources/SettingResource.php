@@ -15,12 +15,12 @@ class SettingResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            // البيانات الثابتة
+            // Static Data
             'email' => $this->site_email,
             'logo' => $this->site_logo ? \Illuminate\Support\Facades\Storage::disk('gcs')->url($this->site_logo) : null,
             'maintenance_mode' => (bool) $this->maintenance_mode,
 
-            // البيانات المترجمة (تتغير تلقائياً حسب الميدل وير)
+            // Translated Data (Automatically changes based on middleware)
             'website_name' => $this->site_name,
             'description' => $this->site_description,
             'copyright' => $this->copyright,

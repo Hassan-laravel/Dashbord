@@ -6,7 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Traits\HasRoles; // استدعاء التريت
+use Spatie\Permission\Traits\HasRoles; //Trait call
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */

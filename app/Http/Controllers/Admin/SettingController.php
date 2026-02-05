@@ -11,9 +11,10 @@ use Illuminate\Support\Facades\Storage;
 class SettingController extends Controller
 {
     use HandlesGcsImage;
+
     public function index()
     {
-        // جلب الإعدادات (الصف الأول دائماً)
+        // Fetch settings (Always the first row)
         $setting = Setting::first();
         return view('admin.settings.index', compact('setting'));
     }
@@ -22,14 +23,14 @@ class SettingController extends Controller
     {
         $setting = Setting::firstOrFail();
 
-        // 1. التحقق من البيانات
+        // 1. Data Validation
         $rules = [
             'site_email' => 'nullable|email',
             'site_logo' => 'nullable|image|max:2048',
-            'maintenance_mode' => 'nullable', // Checkbox يرسل قيمة أو لا يرسل
+            'maintenance_mode' => 'nullable', // Checkbox sends a value or nothing
         ];
 
-        // التحقق من الحقول المترجمة
+        // Validate translated fields
         foreach (config('language.supported') as $key => $lang) {
             $rules["$key.site_name"] = 'required|string|max:255';
             $rules["$key.site_description"] = 'nullable|string';
@@ -38,13 +39,13 @@ class SettingController extends Controller
 
         $request->validate($rules);
 
-        // 2. تجهيز البيانات للحفظ
+        // 2. Prepare data for saving
         $data = $request->except(['site_logo', '_token']);
 
-        // التعامل مع الـ Checkbox (إذا لم يتم اختياره يعود بـ false)
+        // Handle Checkbox (If not selected, it defaults to 0)
         $data['maintenance_mode'] = $request->has('maintenance_mode') ? 1 : 0;
 
-        // 3. رفع الشعار الجديد
+        // 3. Upload new logo
         if ($request->hasFile('site_logo')) {
             $imageResult = $this->updateImageInGcs($setting->site_logo ?? '', $request->file('site_logo'), 'settings');
             if ($imageResult) {
@@ -52,7 +53,7 @@ class SettingController extends Controller
             }
         }
 
-        // 4. الحفظ (الحزمة تتكفل بحفظ البيانات المترجمة في الجدول الآخر تلقائياً)
+        // 4. Save (The package automatically handles saving translated data into the translations table)
         $setting->update($data);
 
         return back()->with('success', __('dashboard.messages.settings_updated'));

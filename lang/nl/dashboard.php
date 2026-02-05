@@ -153,6 +153,7 @@ return [
         'translated_content' => 'Vertaalde Inhoud',
         'system_settings' => 'Systeeminstellingen',
         'save_settings' => 'Instellingen Opslaan',
+         'settings_updated' => 'Instellingen succesvol bijgewerkt',
     ],
 
     // 8. Pages (Pagina's)

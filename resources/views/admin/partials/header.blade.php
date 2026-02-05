@@ -1,28 +1,28 @@
 <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
 
-    {{-- اسم المشروع / الشعار --}}
+    {{-- Project Name / Logo --}}
     <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="{{ route('admin.dashboard') }}">
         {{ config('app.name', 'Laravel Admin') }}
     </a>
 
-    {{-- زر القائمة للموبايل --}}
+    {{-- Mobile Menu Toggle --}}
     <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
-    {{-- مساحة فارغة (يمكن وضع شريط بحث هنا مستقبلاً) --}}
+    {{-- Spacer (Placeholder for a future search bar) --}}
     <div class="w-100"></div>
 
-    {{-- القائمة اليمنى (اللغة + الخروج) --}}
+    {{-- Right Menu (Language + Logout) --}}
     <div class="navbar-nav">
         <div class="nav-item text-nowrap d-flex align-items-center gap-3 px-3">
 
-            {{-- زر زيارة الموقع الرئيسي --}}
+            {{-- Visit Main Website Button --}}
             <a class="nav-link px-0" href="{{ route('home') }}" target="_blank" title="{{ __('dashboard.general.home') }}">
                 <i class="bi bi-box-arrow-up-right"></i>
             </a>
 
-            {{-- مبدل اللغة --}}
+            {{-- Language Switcher --}}
             <div class="dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-globe2 me-1"></i>
@@ -43,10 +43,10 @@
                 </ul>
             </div>
 
-            {{-- فاصل عمودي --}}
+            {{-- Vertical Separator --}}
             <div class="vr text-white opacity-25"></div>
 
-            {{-- تسجيل الخروج --}}
+            {{-- Logout --}}
             <form action="{{ route('logout') }}" method="POST" class="d-inline">
                 @csrf
                 <button type="submit" class="nav-link px-0 bg-transparent border-0 text-danger" title="{{ __('dashboard.nav.logout') }}">

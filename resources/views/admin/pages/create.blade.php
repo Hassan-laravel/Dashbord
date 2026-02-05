@@ -10,20 +10,20 @@
     @csrf
 
     <div class="row">
-        {{-- العمود الرئيسي (المحتوى) --}}
+        {{-- Main Column (Content) --}}
         <div class="col-lg-9">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body">
                     @php $currentLang = app()->getLocale(); @endphp
 
-                    {{-- تنبيه اللغة --}}
+                    {{-- Language Alert --}}
                     <div class="alert alert-info py-2 small mb-3">
                         <i class="bi bi-info-circle me-1"></i>
                         {{ __('dashboard.general.entry_language') }}
                         <strong>{{ config('language.supported.'.$currentLang.'.name') }}</strong>
                     </div>
 
-                    {{-- العنوان --}}
+                    {{-- Title --}}
                     <div class="mb-3">
                         <label class="form-label fw-bold fs-5">{{ __('dashboard.pages.page_title') }}</label>
                         <input type="text" class="form-control form-control-lg"
@@ -34,7 +34,7 @@
                                required>
                     </div>
 
-                    {{-- المحتوى --}}
+                    {{-- Content --}}
                     <div class="mb-3">
                         <textarea id="summernote" name="{{ $currentLang }}[content]">{{ old($currentLang.'.content') }}</textarea>
                     </div>
@@ -62,9 +62,9 @@
             </div>
         </div>
 
-        {{-- العمود الجانبي --}}
+        {{-- Sidebar --}}
         <div class="col-lg-3">
-            {{-- النشر --}}
+            {{-- Publish --}}
             <div class="card shadow-sm border-0 mb-3">
                 <div class="card-header bg-white fw-bold">{{ __('dashboard.posts.publish_section') }}</div>
                 <div class="card-body">
@@ -81,7 +81,7 @@
                 </div>
             </div>
 
-            {{-- الصورة البارزة --}}
+            {{-- Featured Image --}}
             <div class="card shadow-sm border-0 mb-3">
                 <div class="card-header bg-white fw-bold">{{ __('dashboard.pages.featured_image') }}</div>
                 <div class="card-body text-center">
@@ -100,7 +100,7 @@
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
 <script>
     $('#summernote').summernote({
-        placeholder: 'محتوى الصفحة...',
+        placeholder: 'Page content...',
         tabsize: 2,
         height: 350
     });
@@ -114,6 +114,7 @@
     }
 
     function handleTitleChange(text) {
+        // Generates a slug while supporting Arabic/Multi-lang characters
         let slug = text.trim().replace(/\s+/g, '-').replace(/[^\w\u0621-\u064A-]/g, '');
         document.getElementById('pageSlug').value = slug;
         document.getElementById('pageMetaTitle').value = text;

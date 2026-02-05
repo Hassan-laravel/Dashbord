@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {{-- استخدام مفتاح الترجمة للعنوان --}}
+    {{-- Use translation key for the title --}}
     <title>{{ __('dashboard.nav.dashboard') }} - @yield('title')</title>
 
     @if (config('language.supported.' . app()->getLocale() . '.dir') == 'rtl')
@@ -51,7 +51,7 @@
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
                 @include('admin.partials.header')
 
-                {{-- عنوان الصفحة الديناميكي --}}
+                {{-- Dynamic page title --}}
                 <div class="pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">@yield('header_title')</h1>
                 </div>

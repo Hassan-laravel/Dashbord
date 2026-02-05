@@ -12,14 +12,14 @@
             </div>
         </div>
         <div class="mt-3 mb-0 text-sm">
-            {{-- مثال: عرض نسبة التحسن (يمكن جعلها ديناميكية لاحقاً) --}}
+            {{-- Example: Display growth percentage (can be made dynamic later) --}}
             <span class="text-success fw-bold me-2">
                 <i class="bi bi-arrow-up"></i> 3.48%
             </span>
             <span class="text-nowrap text-muted small">{{ __('dashboard.since_last_month') }}</span>
         </div>
     </div>
-    {{-- رابط التفاصيل --}}
+    {{-- Details link --}}
     <a href="{{ $link }}" class="card-footer bg-transparent border-0 text-end small text-muted hover-link">
         {{ __('dashboard.view_details') }} <i class="bi bi-arrow-right ms-1"></i>
     </a>

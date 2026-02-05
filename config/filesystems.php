@@ -63,7 +63,7 @@ return [
     'driver' => 'gcs',
     'project_id' => env('GCS_PROJECT_ID', 'laravel-gcs-project'),
 
-    // الحل الجذري: نضع محتوى الـ JSON مباشرة هنا
+
     'key_file' => [
                 "type" => "service_account",
                 "project_id" => "laravel-gcs-project",

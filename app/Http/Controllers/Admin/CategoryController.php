@@ -11,6 +11,7 @@ use App\Traits\HandlesGcsImage;
 class CategoryController extends Controller
 {
     use HandlesGcsImage;
+
     public function index()
     {
         $categories = Category::latest()->paginate(10);
@@ -19,26 +20,26 @@ class CategoryController extends Controller
 
     public function store(StoreCategoryRequest $request)
     {
-        // الحزمة تتكفل بحفظ البيانات المترجمة تلقائياً طالما المصفوفة صحيحة
+        // The package handles saving translated data automatically as long as the array structure is correct
         Category::create($request->all());
 
         return redirect()->route('admin.categories.index')
             ->with('success', __('dashboard.messages.category_created'));
     }
 
-public function edit($id)
+    public function edit($id)
     {
-        // جلب التصنيف مع الترجمات
+        // Fetch the category with its translations
         $category = Category::with('translations')->findOrFail($id);
 
-        // تجهيز البيانات الأساسية
+        // Prepare the basic data
         $response = [
             'id' => $category->id,
             'status' => $category->status,
         ];
 
-        // إعادة تشكيل الترجمات لتكون المفاتيح هي أكواد اللغة (ar, en)
-        // هذا ما يجعله متوافقاً مع كود الجافاسكربت
+        // Restructure translations so that keys are language codes (ar, en, nl)
+        // This ensures compatibility with the frontend JavaScript logic
         foreach ($category->translations as $translation) {
             $response[$translation->locale] = [
                 'name' => $translation->name,

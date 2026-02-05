@@ -10,17 +10,20 @@
         @csrf @method('PUT')
 
         <div class="row">
+            {{-- Main Column (Content) --}}
             <div class="col-lg-9">
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-body">
                         @php $currentLang = app()->getLocale(); @endphp
 
+                        {{-- Language Indicator Alert --}}
                         <div class="alert alert-info py-2 small mb-3">
                             <i class="bi bi-info-circle me-1"></i>
                             {{ __('dashboard.general.entry_language') }}
                             <strong>{{ config('language.supported.' . $currentLang . '.name') }}</strong>
                         </div>
 
+                        {{-- Article Title --}}
                         <div class="mb-3">
                             <label class="form-label fw-bold fs-5">{{ __('dashboard.posts.article_title') }}</label>
                             <input type="text" class="form-control form-control-lg" name="{{ $currentLang }}[title]"
@@ -29,10 +32,12 @@
                                 required>
                         </div>
 
+                        {{-- Content Editor --}}
                         <div class="mb-3">
                             <textarea id="summernote" name="{{ $currentLang }}[content]">{{ old($currentLang . '.content', $post->translate($currentLang)->content ?? '') }}</textarea>
                         </div>
 
+                        {{-- Social Media Links --}}
                         <div class="mb-3">
                             <label class="form-label"><i class="bi bi-youtube text-danger"></i>
                                 {{ __('dashboard.posts.youtube_link') }}</label>
@@ -42,6 +47,7 @@
                     </div>
                 </div>
 
+                {{-- SEO Section --}}
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-header bg-white fw-bold">{{ __('dashboard.posts.seo_section') }}</div>
                     <div class="card-body">
@@ -65,7 +71,9 @@
                 </div>
             </div>
 
+            {{-- Sidebar (Settings & Media) --}}
             <div class="col-lg-3">
+                {{-- Publish Section --}}
                 <div class="card shadow-sm border-0 mb-3">
                     <div class="card-header bg-white fw-bold">{{ __('dashboard.posts.publish_section') }}</div>
                     <div class="card-body">
@@ -85,6 +93,7 @@
                     </div>
                 </div>
 
+                {{-- Categories Section --}}
                 <div class="card shadow-sm border-0 mb-3">
                     <div class="card-header bg-white fw-bold">{{ __('dashboard.posts.categories_section') }}</div>
                     <div class="card-body" style="max-height: 250px; overflow-y: auto;">
@@ -100,6 +109,7 @@
                     </div>
                 </div>
 
+                {{-- Featured Image --}}
                 <div class="card shadow-sm border-0 mb-3">
                     <div class="card-header bg-white fw-bold">{{ __('dashboard.posts.featured_image') }}</div>
                     <div class="card-body text-center">
@@ -115,6 +125,8 @@
                             onchange="previewImage(this, 'featured-preview')">
                     </div>
                 </div>
+
+                {{-- Gallery Section --}}
                 <div class="card shadow-sm border-0 mb-3">
                     <div class="card-header bg-white fw-bold">{{ __('dashboard.posts.gallery') }}</div>
                     <div class="card-body">
@@ -163,7 +175,7 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            // إخفاء الصورة من الصفحة فوراً
+                            // Immediately remove image from the DOM
                             document.querySelector(`.gallery-item-${imageId}`).remove();
                         } else {
                             alert("Error deleting image");
@@ -172,6 +184,7 @@
                     .catch(error => console.error('Error:', error));
             }
         }
+
         $('#summernote').summernote({
             placeholder: "{{ __('dashboard.posts.content_placeholder') }}",
             tabsize: 2,
@@ -198,6 +211,7 @@
         }
 
         function handleTitleChange(text) {
+            // Slug generation supporting Arabic characters
             let slug = text.trim().replace(/\s+/g, '-').replace(/[^\w\u0621-\u064A-]/g, '');
             document.getElementById('postSlug').value = slug;
         }

@@ -148,6 +148,7 @@ return [
         'post_created' => 'Post created successfully',
         'post_updated' => 'Post updated successfully',
         'post_deleted' => 'Post deleted successfully',
+         'settings_updated' => "Settings updated successfully",
     ],
     'settings' => [
         'title' => 'Site Settings',
@@ -163,6 +164,7 @@ return [
         'translated_content' => 'Translated Content',
         'system_settings' => 'System Settings',
         'save_settings' => 'Save Settings',
+
     ],
     'pages' => [
         'title' => 'Pages Management',

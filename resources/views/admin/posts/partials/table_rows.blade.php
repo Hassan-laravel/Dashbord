@@ -1,6 +1,6 @@
 @forelse($posts as $post)
     <tr>
-        <td>{{ $posts->firstItem() + $loop->index }}</td> {{-- ترقيم متسلسل حسب الصفحة --}}
+        <td>{{ $posts->firstItem() + $loop->index }}</td> {{-- Sequential numbering based on pagination --}}
         <td>
             @if($post->image)
                 <img src="{{ Storage::disk('gcs')->url($post->image) }}" width="50" class="rounded" alt="img">
@@ -9,13 +9,13 @@
             @endif
         </td>
         <td>
-            {{-- لاحظ: $post->title يترجم تلقائياً حسب لغة التطبيق الحالية --}}
+            {{-- Note: $post->title is automatically translated based on the current app locale --}}
             <span class="fw-bold d-block">{{ $post->title }}</span>
             <span class="small text-muted">{{ $post->slug }}</span>
         </td>
         <td>
             @foreach($post->categories as $cat)
-                {{-- لاحظ: $cat->name يترجم تلقائياً --}}
+                {{-- Note: $cat->name is also automatically translated --}}
                 <span class="badge bg-light text-dark border">{{ $cat->name }}</span>
             @endforeach
         </td>
@@ -33,7 +33,7 @@
                 <i class="bi bi-pencil"></i>
             </a>
 
-            {{-- زر الحذف (مثال) --}}
+            {{-- Delete button (example) --}}
             <form action="{{ route('admin.posts.destroy', $post->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('{{ __('dashboard.messages.confirm_delete') }}')">
                 @csrf
                 @method('DELETE')

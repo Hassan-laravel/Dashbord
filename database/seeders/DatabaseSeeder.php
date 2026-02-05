@@ -12,7 +12,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. إنشاء الصلاحيات
+        // 1. Create Permissions
         $permissions = [
             'create posts',
             'edit posts',
@@ -25,30 +25,30 @@ class DatabaseSeeder extends Seeder
             Permission::create(['name' => $permission]);
         }
 
-        // 2. إنشاء الأدوار
+        // 2. Create Roles
         $editorRole = Role::create(['name' => 'Editor']);
         // $editorRole->givePermissionTo(['create posts', 'edit posts', 'delete posts']);
-       $editorRole->givePermissionTo(['create posts', 'edit posts']);
+        $editorRole->givePermissionTo(['create posts', 'edit posts']);
 
         $adminRole = Role::create(['name' => 'Super Admin']);
         $adminRole->givePermissionTo(Permission::all());
 
-        // 3. إنشاء المستخدمين (لاحظ كيف نحتفظ بهم في متغيرات)
+        // 3. Create Users (Note how we store them in variables for later use)
         $admin = User::create([
-            'name' => 'المدير العام',
+            'name' => 'Main Admin',
             'email' => 'admin@app.com',
             'password' => Hash::make('password'),
         ]);
         $admin->assignRole('Super Admin');
 
         $editor = User::create([
-            'name' => 'سعيد المحرر',
+            'name' => 'Editor User',
             'email' => 'editor@app.com',
             'password' => Hash::make('password'),
         ]);
         $editor->assignRole('Editor');
 
-        // 4. إنشاء تصنيف وتخزينه في متغير
+        // 4. Create a Category and store it in a variable
         $category = \App\Models\Category::create([
             'status' => true,
             'ar' => [
@@ -65,10 +65,10 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        // 5. إنشاء المنشور (استخدام المتغيرات بدلاً من الأرقام الثابتة)
+        // 5. Create a Post (Using variables instead of hardcoded IDs)
         \App\Models\Post::create([
-            'user_id' => $admin->id, // <--- التعديل هنا: نأخذ الآيدي من المتغير
-            'category_id' => $category->id, // <--- ونأخذ آيدي التصنيف من المتغير
+            'user_id' => $admin->id, // <--- Adjustment here: Fetching ID from the variable
+            'category_id' => $category->id, // <--- Fetching Category ID from the variable
             'status' => 'published',
             'ar' => [
                 'title' => 'عنوان المقال الأول',

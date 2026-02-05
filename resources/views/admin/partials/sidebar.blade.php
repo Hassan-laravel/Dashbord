@@ -1,8 +1,8 @@
-<nav >
+<nav>
     <div class="position-sticky pt-3">
         <ul class="nav flex-column">
 
-            {{-- لوحة التحكم --}}
+            {{-- Dashboard --}}
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
                     <i class="bi bi-speedometer2 me-2"></i>
@@ -10,7 +10,7 @@
                 </a>
             </li>
 
-            {{-- المقالات --}}
+            {{-- Posts --}}
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.posts.*') ? 'active' : '' }}" href="{{ route('admin.posts.index') }}">
                     <i class="bi bi-journal-text me-2"></i>
@@ -18,13 +18,13 @@
                 </a>
             </li>
 
-            {{-- قسم المدير العام فقط --}}
+            {{-- Super Admin Only Section --}}
             @role('Super Admin')
             <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                 <span>{{ __('dashboard.general.actions') }}</span>
             </h6>
 
-            {{-- المستخدمين --}}
+            {{-- Users --}}
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
                     <i class="bi bi-people me-2"></i>
@@ -32,7 +32,7 @@
                 </a>
             </li>
 
-            {{-- التصنيفات --}}
+            {{-- Categories --}}
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}" href="{{ route('admin.categories.index') }}">
                     <i class="bi bi-tags me-2"></i>
@@ -40,7 +40,7 @@
                 </a>
             </li>
 
-            {{-- الصفحات والإعدادات --}}
+            {{-- Pages and Settings --}}
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.pages.*') ? 'active' : '' }}" href="{{ route('admin.pages.index') }}">
                     <i class="bi bi-file-earmark me-2"></i>

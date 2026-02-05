@@ -148,8 +148,9 @@ return [
         'post_created' => 'تم إضافة المقال بنجاح',
         'post_updated' => 'تم تحديث المقال بنجاح',
         'post_deleted' => 'تم حذف المقال بنجاح',
+          'settings_updated' => 'تم تحديث الاعدادات بنجاح',
         //اعدادات
-        'settings_updated' => 'تم تحديث الاعدادات بنجاح',
+
 
     ],
     'settings' => [

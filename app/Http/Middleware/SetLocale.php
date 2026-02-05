@@ -10,22 +10,25 @@ use Illuminate\Support\Facades\Session;
 
 class SetLocale
 {
+    /**
+     * Handle an incoming request.
+     */
     public function handle(Request $request, Closure $next): Response
     {
-        // التحقق من وجود لغة مخزنة في الجلسة
+        // Check if a locale is stored in the session
         if (Session::has('locale')) {
             $locale = Session::get('locale');
         } else {
-            // إذا لم توجد، نستخدم اللغة الافتراضية من ملف الإعدادات
+            // If not found, use the default language from the configuration file
             $locale = config('language.default');
         }
 
-        // التحقق من أن اللغة مدعومة في ملف إعداداتنا
+        // Verify that the locale is supported in our configuration file
         if (!array_key_exists($locale, config('language.supported'))) {
             $locale = config('language.default');
         }
 
-        // تعيين لغة التطبيق الحالية
+        // Set the current application locale
         App::setLocale($locale);
 
         return $next($request);

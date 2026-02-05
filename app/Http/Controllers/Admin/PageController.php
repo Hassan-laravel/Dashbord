@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 class PageController extends Controller
 {
     use HandlesGcsImage;
+
     public function index()
     {
         $pages = Page::with('translations', 'author')->latest()->paginate(10);
@@ -27,8 +28,7 @@ class PageController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all(), $request->file('image'));
-        // التحقق (للغة الحالية فقط)
+        // Validation (for the current locale only)
         $locale = app()->getLocale();
         $request->validate([
             "$locale.title" => 'required|string|max:255',
@@ -38,14 +38,13 @@ class PageController extends Controller
         ]);
 
         DB::beginTransaction();
-        // داخل PageController.php في دالة store
 
         try {
             $data = $request->except(['image']);
             $data['user_id'] = Auth::id();
 
             if ($request->hasFile('image')) {
-                // إذا فشل الرفع هنا، سينتقل الكود فوراً للـ catch ويظهر لك الخطأ الحقيقي
+                // If upload fails here, it will jump to the catch block and display the actual error
                 $imageResult = $this->uploadImageToGcs($request->file('image'), 'pages');
                 if ($imageResult) {
                     $data['image'] = $imageResult['path'];
@@ -53,11 +52,14 @@ class PageController extends Controller
             }
 
             Page::create($data);
+
             DB::commit();
-            // ...
+
+            return redirect()->route('admin.pages.index')->with('success', __('dashboard.messages.success'));
+
         } catch (\Exception $e) {
             DB::rollBack();
-            // هنا سيظهر لك الخطأ الحقيقي في أعلى الصفحة
+            // The actual error message will be displayed at the top of the page
             return back()->with('error', "GCS Error: " . $e->getMessage())->withInput();
         }
     }
@@ -70,7 +72,7 @@ class PageController extends Controller
     public function update(Request $request, Page $page)
     {
         $locale = app()->getLocale();
-        // ID الصفحة الحالية للاستثناء من فحص الرابط المكرر
+        // Current page ID to exclude from the unique slug check
         $pageId = $page->id;
 
         $request->validate([
@@ -106,5 +108,4 @@ class PageController extends Controller
         $page->delete();
         return back()->with('success', __('dashboard.messages.success'));
     }
-
 }

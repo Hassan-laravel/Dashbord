@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class CategoryTranslation extends Model
 {
-    // لا نحتاج timestamps في جدول الترجمة
+    // Timestamps are not required in the translation table
     public $timestamps = false;
 
-    // الحقول المسموح بتعبئتها (يجب أن تطابق الحقول في الماغريشن)
+    // Mass assignable attributes (must match the fields in the migration)
     protected $fillable = ['name', 'slug', 'meta_title', 'meta_description'];
 }

@@ -23,6 +23,10 @@
                             <td>
                                 @if ($page->image)
                                     <img src="{{ Storage::disk('gcs')->url($page->image) }}" width="50" class="rounded">
+                                @else
+                                    <div class="bg-light rounded text-center" style="width: 50px; height: 35px; line-height: 35px;">
+                                        <i class="bi bi-image text-muted"></i>
+                                    </div>
                                 @endif
                             </td>
                             <td>
@@ -31,14 +35,15 @@
                             </td>
                             <td>
                                 @if ($page->status == 'published')
-                                    <span class="badge bg-success">منشور</span>
+                                    <span class="badge bg-success">{{ __('dashboard.posts.status_published') }}</span>
                                 @else
-                                    <span class="badge bg-secondary">مسودة</span>
+                                    <span class="badge bg-secondary">{{ __('dashboard.posts.status_draft') }}</span>
                                 @endif
                             </td>
                             <td class="text-end">
-                                <a href="{{ route('admin.pages.edit', $page->id) }}" class="btn btn-sm btn-light"><i
-                                        class="bi bi-pencil-square"></i></a>
+                                <a href="{{ route('admin.pages.edit', $page->id) }}" class="btn btn-sm btn-light">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
                                 <div class="d-inline-block">
                                     <form action="{{ route('admin.pages.destroy', $page->id) }}" method="POST"
                                         onsubmit="return confirm('{{ __('dashboard.general.confirm_delete') }}')">
@@ -49,17 +54,22 @@
                                         </button>
                                     </form>
                                 </div>
-                                {{-- زر الحذف هنا --}}
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="text-center py-4">لا يوجد صفحات.</td>
+                            <td colspan="4" class="text-center py-4 text-muted">
+                                {{ __('dashboard.general.no_records_found') }}
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        <div class="card-footer bg-white">{{ $pages->links() }}</div>
+        @if($pages->hasPages())
+            <div class="card-footer bg-white">
+                {{ $pages->links() }}
+            </div>
+        @endif
     </div>
 @endsection

@@ -6,9 +6,12 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        // 1. الإعدادات الثابتة (مشتركة لكل اللغات)
+        // 1. Static Settings (Global across all languages)
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
             $table->string('site_email')->nullable();
@@ -17,7 +20,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // 2. ترجمة الإعدادات (متغيرة حسب اللغة)
+        // 2. Setting Translations (Variable based on locale)
         Schema::create('setting_translations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('setting_id')->constrained('settings')->cascadeOnDelete();
@@ -31,6 +34,9 @@ return new class extends Migration
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('setting_translations');

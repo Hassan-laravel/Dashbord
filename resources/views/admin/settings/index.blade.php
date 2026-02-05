@@ -9,7 +9,7 @@
     @csrf
 
     <div class="row">
-        {{-- العمود الأيمن: الإعدادات المترجمة --}}
+        {{-- Right Column: Translated Settings --}}
         <div class="col-lg-8">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white py-3">
@@ -25,7 +25,7 @@
                                         data-bs-toggle="tab"
                                         data-bs-target="#lang-{{ $key }}"
                                         type="button">
-                                    {{-- عرض اسم اللغة المترجم إن وجد --}}
+                                    {{-- Display translated language name if available --}}
                                     {{ $lang['name'] }}
                                 </button>
                             </li>
@@ -62,8 +62,9 @@
             </div>
         </div>
 
-        {{-- العمود الأيسر --}}
+        {{-- Left Column --}}
         <div class="col-lg-4">
+            {{-- Site Logo --}}
             <div class="card shadow-sm border-0 mb-3">
                 <div class="card-header bg-white py-3">
                     <h6 class="mb-0 fw-bold">{{ __('dashboard.settings.site_logo') }}</h6>
@@ -78,6 +79,7 @@
                 </div>
             </div>
 
+            {{-- System Settings --}}
             <div class="card shadow-sm border-0 mb-3">
                 <div class="card-header bg-white py-3">
                     <h6 class="mb-0 fw-bold">{{ __('dashboard.settings.system_settings') }}</h6>

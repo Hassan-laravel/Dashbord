@@ -9,21 +9,26 @@ use Illuminate\Support\Facades\App;
 
 class SetApiLocale
 {
+    /**
+     * Handle an incoming request.
+     */
     public function handle(Request $request, Closure $next): Response
     {
-        // 1. الأولوية للغة القادمة من الرابط (?locale=en)
-        // 2. إذا لم توجد، نرى الهيدر
-        // 3. إذا لم يوجد، نأخذ اللغة الافتراضية 'ar'
+        // 1. Priority goes to the locale from the query string (?locale=en)
+        // 2. If not present, check the 'Accept-Language' header
+        // 3. If neither exists, fall back to the default language 'en'
         $locale = $request->query('locale') ?? $request->header('Accept-Language') ?? 'en';
 
-        // قائمة اللغات المدعومة في نظامك
-        $supportedLocales = ['ar', 'en','nl']; // تأكد أن هذه تطابق config/language.php
+        // List of supported locales in your system
+        // Ensure these match your config/language.php settings
+        $supportedLocales = ['ar', 'en', 'nl'];
 
-        // إذا كانت اللغة المطلوبة مدعومة، نعتمدها
+        // If the requested locale is supported, set it as the app locale
         if (in_array($locale, $supportedLocales)) {
             App::setLocale($locale);
         } else {
-            App::setLocale('en'); // Fallback
+            // Fallback to English if the requested locale is not supported
+            App::setLocale('en');
         }
 
         return $next($request);

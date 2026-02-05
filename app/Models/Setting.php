@@ -10,9 +10,9 @@ class Setting extends Model implements TranslatableContract
 {
     use Translatable;
 
-    // الحقول المترجمة (التي توجد في جدول Translations)
+    // Translated attributes (stored in the Translations table)
     public $translatedAttributes = ['site_name', 'site_description', 'copyright'];
 
-    // الحقول الثابتة (التي توجد في جدول Settings)
+    // Static attributes (stored in the Settings table)
     protected $fillable = ['site_email', 'site_logo', 'maintenance_mode'];
 }
