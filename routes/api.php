@@ -12,11 +12,11 @@ use App\Http\Middleware\SetApiLocale;
 
 Route::post('/test-gcs-upload', [GcsTestController::class, 'uploadTest']);
 Route::get('/test-gcs-connection', [GcsTestController::class, 'testConnection']);
-
+//reciev
 Route::post('/contact/send', [ContactController::class, 'store'])
      // Allows only 5 messages per minute per IP address
      ->middleware('throttle:5,1');
-
+//send
 Route::middleware([SetApiLocale::class])->group(function () {
 
     // 1. Global Settings Route

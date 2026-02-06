@@ -1,69 +1,134 @@
-# 📰 News & Articles Admin Dashboard (with JSON API)
+# News-CMS
 
-A professional Laravel-based management system for news, articles, and static pages. This project serves as a content hub that manages media via **Google Cloud Storage** and exports all database content as **JSON API endpoints**.
-
-
-
-## 🌟 Key Features
-* **Article Management:** Full CRUD operations for news and blog posts.
-* **Categorization:** Dynamic category system for organizing content.
-* **JSON API Export:** All articles, categories, and pages are accessible via JSON links.
-* **Cloud Integration:** Native integration with **Google Cloud Storage (GCS)** for image hosting.
-* **Pre-configured Data:** Includes Seeders for immediate testing.
+A professional, multilingual News Management System (CMS) built with **Laravel 12**. This project features a robust dashboard for managing categories, articles, and settings with full multi-language support (Arabic & English).
 
 ---
 
-## 🛠 Prerequisites
-Before installation, ensure you have:
-* **PHP:** >= 8.1
-* **Composer**
-* **Node.js & NPM**
-* **Database:** MySQL / PostgreSQL
-* **Google Cloud Account:** A service account JSON key and an active bucket.
+## 🚀 Features
+
+- **Multilingual Support**: Fully translatable categories, posts, pages, and settings (using `astrotomic/laravel-translatable`).
+- **Cloud Storage**: Integrated with **Google Cloud Storage (GCS)** for media hosting (using `spatie/laravel-google-cloud-storage`).
+- **Role-Based Access Control (RBAC)**: Fine-grained permissions for Admins and Editors (using `spatie/laravel-permission`).
+- **Modern UI**: Styled with **Tailwind CSS v4** and bundled with **Vite**.
+- **API First**: Designed to output **JSON responses** for easy integration with frontend frameworks or mobile apps.
+- **Contact Management**: Integrated contact form handling with rate limiting.
 
 ---
 
-## 📥 Installation Guide
+## 🛠️ Technology Stack
 
-### 1. Clone the Repository
+| Component       | Technology                                 |
+| :-------------- | :----------------------------------------- |
+| **Framework**   | [Laravel 12](https://laravel.com)          |
+| **PHP Version** | ^8.2                                       |
+| **Styling**     | [Tailwind CSS v4](https://tailwindcss.com) |
+| **Build Tool**  | [Vite 7](https://vitejs.dev)               |
+| **Database**    | MySQL / SQLite (Standard Laravel)          |
+
+---
+
+## 📦 Installed Libraries
+
+### PHP (Composer)
+
+- `astrotomic/laravel-translatable`: For multilingual content management.
+- `spatie/laravel-google-cloud-storage`: For GCS disk integration.
+- `spatie/laravel-permission`: For roles and permissions.
+- `laravel/sanctum`: For API authentication.
+- `laravel/tinker`: Interactive console.
+
+---
+
+## 📡 API Documentation
+
+The project provides a clean JSON API for external consumption. Localized routes use the `SetApiLocale` middleware to deliver content in the requested language.
+
+### Base URL
+
+`http://your-domain.com/api`
+
+### Endpoints
+
+| Method   | Endpoint               | Description                                     |
+| :------- | :--------------------- | :---------------------------------------------- |
+| **GET**  | `/settings`            | Get global site settings (CMS configurations).  |
+| **GET**  | `/posts`               | List all published posts (supports pagination). |
+| **GET**  | `/posts/{slug}`        | Get details of a single post by slug.           |
+| **GET**  | `/categories`          | List all available categories.                  |
+| **GET**  | `/categories/{slug}`   | Get posts belonging to a specific category.     |
+| **GET**  | `/pages`               | List all static pages.                          |
+| **GET**  | `/pages/{slug}`        | Get content of a specific static page.          |
+| **POST** | `/contact/send`        | Submit contact form (Throttled: 5 req/min).     |
+| **GET**  | `/test-gcs-connection` | Verify Google Cloud Storage connectivity.       |
+| **POST** | `/test-gcs-upload`     | Test file upload to GCS.                        |
+
+> [!TIP]
+> **Localization**: The API automatically detects the language preferred by the client. Ensure your requests include the appropriate locale headers if configured in `SetApiLocale` middleware.
+
+---
+
+## 📂 Database Structure
+
+The project includes several key tables to manage the CMS functionality:
+
+- **`users`**: Managed roles and credentials.
+- **`categories`** / **`category_translations`**: Multilingual categories.
+- **`posts`** / **`post_translations`**: Articles with status management.
+- **`post_images`**: Relation for article media.
+- **`settings`** / **`setting_translations`**: Global CMS configurations.
+- **`pages`** / **`page_translations`**: Custom static pages.
+- **`contacts`**: Form submissions storage.
+
+---
+
+## 🔧 Installation & Setup
+
+### 1. Prerequisites
+
+- PHP ^8.2, Composer, Node.js & NPM, MySQL or SQLite.
+
+### 2. Clone and Install
+
 ```bash
-
-git clone (https://github.com/Hassan-laravel/Dashbord.git)
-cd your-repo-name
-2. Install PHP & JS Dependencies
-# Install Laravel packages
 composer install
-
-# Install and compile frontend assets
 npm install
-npm run build
+```
 
-3. Environment Setup
-Copy the example environment file and generate your application key:
+### 3. Configuration
+
+```bash
 cp .env.example .env
 php artisan key:generate
+```
 
-4. Database & Seeding
-Configure your DB_* variables in the .env file, then run the migrations along with the seeders to populate categories and sample articles:
+> [!IMPORTANT]
+> Update your `.env` file with your database credentials and GCS keys:
+>
+> - `FILESYSTEM_DISK=gcs`
+> - `GOOGLE_CLOUD_PROJECT_ID=...`
+> - `GOOGLE_CLOUD_KEY_FILE=...`
+
+### 4. Database Setup
+
+```bash
 php artisan migrate --seed
+```
 
+### 5. Start Development Server
 
-5. Google Cloud Storage Configuration
-Add your credentials to the .env file to handle media:
+```bash
+npm run dev
+```
 
-Place your JSON key file in storage/app/google-cloud-key.json.
+---
 
-Update the following fields:
+## 🛡️ Default Credentials
 
-مقتطف الرمز
-FILESYSTEM_DISK=gcs
-GCS_PROJECT_ID=your-gcp-project-id
-GCS_BUCKET=your-bucket-name
-GCS_KEY_FILE=storage/app/google-cloud-key.json
+- **Admin**: `admin@app.com` (Password: `password`)
+- **Editor**: `editor@app.com` (Password: `password`)
 
-🚀 Running the Project
-Start the local development server:
-php artisan serve
-Access the dashboard at http://127.0.0.1:8000.
+---
 
-Pro Tip: Check DatabaseSeeder.php to find the default admin login credentials created during the seeding process.
+## 📝 License
+
+This project is open-sourced software licensed under the [MIT license](LICENSE).
